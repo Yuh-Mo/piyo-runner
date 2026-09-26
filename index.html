@@ -85,6 +85,27 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
 .prog .lbl{font-weight:800;font-size:14px;white-space:nowrap;min-width:78px;text-align:right}
 .progwrap{margin-top:6px}
 .progwrap .t{font-size:13px;opacity:.7;font-weight:800;margin:0}
+.selcard{padding:14px 12px 16px}
+.prev{display:flex;align-items:center;gap:10px;background:var(--chip);border-radius:24px;padding:6px 10px}
+.prev canvas{flex:none}
+.prevtxt{flex:1;min-width:0;text-align:left}
+.prevtxt .big{margin:0;font-size:clamp(19px,5.4vw,24px)}
+.prevtxt .soft{margin:2px 0 0;font-size:14px;line-height:1.4}
+button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
+.tabs{display:flex;gap:8px;justify-content:center;margin:10px 0 6px}
+.tab{font:inherit;font-weight:800;font-size:18px;color:var(--ink);background:var(--chip);border:3px solid transparent;border-radius:999px;padding:6px 22px;cursor:pointer;opacity:.7}
+.tab.on{border-color:var(--accent);opacity:1}
+.pager{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:6px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;touch-action:pan-y}
+.pager .arrow{width:46px;height:46px;font-size:30px}
+.pager .dots{margin:0}
+.tile{position:relative;min-width:0;background:var(--chip);border:3px solid transparent;border-radius:16px;padding:3px;cursor:pointer;aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tile canvas{width:100%!important;height:auto!important;max-height:100%}
+.tile.sel{border-color:var(--accent)}
+.tile.locked{opacity:.6}
+.tile .lock{position:absolute;right:4px;top:2px;font-size:16px}
+.tile .new{position:absolute;left:4px;top:2px;background:#E94F5C;color:#fff;font-size:10px;font-weight:800;border-radius:999px;padding:1px 6px}
+.tile .pen{font-size:28px;width:auto;height:auto}
 .carousel{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px}
 .arrow{font:inherit;font-size:34px;font-weight:800;color:var(--accent);background:var(--chip);border:0;border-radius:50%;width:52px;height:52px;cursor:pointer;line-height:1;flex:none}
 .stage{background:var(--chip);border-radius:28px;padding:8px;touch-action:pan-y;position:relative}
@@ -183,26 +204,26 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
   </div>
 
   <div class="overlay" id="selectScreen" hidden>
-    <div class="card">
-      <h2>なかま</h2>
-      <div class="carousel">
-        <button class="arrow" id="prevBtn" aria-label="まえ">‹</button>
-        <div class="stage" id="stage"><canvas id="selCv" data-size="180"></canvas></div>
-        <button class="arrow" id="nextBtn" aria-label="つぎ">›</button>
-      </div>
-      <div class="dots" id="dots"></div>
-      <p class="big" id="selName"></p>
-      <div id="selCond"></div>
-      <p class="subhead" style="margin-top:8px;font-size:16px">ぼうし</p>
-      <div class="tools" id="hatRow"></div>
-      <p class="soft" id="hatCond" style="font-size:14px;min-height:1.2em;margin:4px 0 0"></p>
-      <div class="btns">
-        <button class="go" id="chooseBtn">この こに する！</button>
-        <div class="row">
-          <button class="sub" id="editBtn" hidden>✏️ かきなおす</button>
-          <button class="sub" id="backBtn">もどる</button>
+    <div class="card selcard">
+      <div class="prev">
+        <canvas id="selCv" data-size="130"></canvas>
+        <div class="prevtxt">
+          <p class="big" id="selName"></p>
+          <p class="soft" id="selCond"></p>
+          <button class="sub small" id="editBtn" hidden>✏️ かきなおす</button>
         </div>
       </div>
+      <div class="tabs">
+        <button class="tab on" data-tab="chars">なかま</button>
+        <button class="tab" data-tab="hats">ぼうし</button>
+      </div>
+      <div class="tiles" id="tiles"></div>
+      <div class="pager">
+        <button class="arrow" id="prevBtn" aria-label="まえのページ">‹</button>
+        <div class="dots" id="dots"></div>
+        <button class="arrow" id="nextBtn" aria-label="つぎのページ">›</button>
+      </div>
+      <div class="btns"><button class="go" id="backBtn">もどる</button></div>
     </div>
   </div>
 
@@ -807,11 +828,11 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
   function loadSave() {
     try {
       const s = JSON.parse(localStorage.getItem('piyo-save') || 'null');
-      if (s) return { total: s.total | 0, best: s.best | 0, sel: s.sel || 'piyo', runs: s.runs | 0, adult: !!s.adult, missions: s.missions | 0, maxCombo: s.maxCombo | 0, adultBest: s.adultBest | 0, hat: s.hat || 'none' };
+      if (s) return { total: s.total | 0, best: s.best | 0, sel: s.sel || 'piyo', runs: s.runs | 0, adult: !!s.adult, missions: s.missions | 0, maxCombo: s.maxCombo | 0, adultBest: s.adultBest | 0, hat: s.hat || 'none', seenC: Array.isArray(s.seenC) ? s.seenC : [], seenH: Array.isArray(s.seenH) ? s.seenH : [], seeded: !!s.seeded };
     } catch (e) {}
     let best = 0;
     try { best = parseInt(localStorage.getItem('piyo-best') || '0', 10) || 0; } catch (e) {}
-    return { total: 0, best, sel: 'piyo', runs: 0, adult: false, missions: 0, maxCombo: 0, adultBest: 0, hat: 'none' };
+    return { total: 0, best, sel: 'piyo', runs: 0, adult: false, missions: 0, maxCombo: 0, adultBest: 0, hat: 'none', seenC: [], seenH: [], seeded: true };
   }
   const save = loadSave();
   function persist() { try { localStorage.setItem('piyo-save', JSON.stringify(save)); } catch (e) {} }
@@ -1898,7 +1919,8 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
       const alpha = t.t > t.dur - 0.4 ? (t.dur - t.t) / 0.4 : 1;
       ctx.save();
       ctx.globalAlpha = Math.max(0, alpha);
-      const y = Math.max(70, groundY * 0.24) + i * 46;
+      const hudBottom = 118 / scale;
+      const y = Math.max(hudBottom, groundY * 0.24) + i * 42;
       ctx.translate(W / 2, y); ctx.scale(pop, pop);
       outlined(t.text, 0, 0, t.size, t.color);
       ctx.restore();
@@ -1928,7 +1950,7 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     drawToasts();
     if (state === 'play' && elapsed < 3.5) {
       ctx.globalAlpha = Math.min(1, (3.5 - elapsed) / 0.8);
-      outlined('どこを タッチしても ジャンプ！', W / 2, Math.max(90, groundY * 0.5), 24, '#FFFFFF');
+      outlined('どこを タッチしても ジャンプ！', W / 2, groundY - 150, 24, '#FFFFFF');
       ctx.globalAlpha = 1;
     }
   }
@@ -1942,8 +1964,9 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     draw();
     if (!startScreen.hidden) drawPreview($('heroCv'), save.sel, false, { run: runT, air: false, still: false });
     if (!selectScreen.hidden) {
-      const it = items[selIdx];
-      drawPreview($('selCv'), it.id, it.locked, it.locked ? null : { run: runT * 0.8, air: false, still: false });
+      const it = tab === 'chars' ? items[selIdx] : null;
+      const showLocked = it && (it.locked || it.empty);
+      drawPreview($('selCv'), showLocked ? it.id : save.sel, showLocked && it.locked, showLocked ? null : { run: runT * 0.8, air: false, still: false });
     }
     requestAnimationFrame(frame);
   }
@@ -2021,111 +2044,149 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
   }
   $('homeBtn').addEventListener('click', goHome);
 
-  // ---------- character select (carousel) ----------
-  let items = [], selIdx = 0, returnTo = startScreen;
+  // ---------- character & hat select (paged tiles) ----------
+  const PAGE = 8;
+  let items = [], selIdx = 0, returnTo = startScreen, tab = 'chars', page = 0;
+  save.seenC = save.seenC || []; save.seenH = save.seenH || [];
+  if (save.runs > 0 && !save.seeded) {
+    for (const c of CHARS) if (isUnlocked(c)) save.seenC.push(c.id);
+    for (const h of HATS) if (h.ok(save)) save.seenH.push(h.id);
+    save.seeded = true; persist();
+  }
   function buildItems() {
     items = CHARS.map(c => ({ id: c.id, ch: c, locked: !isUnlocked(c) }));
     for (let i = 0; i < SLOTS; i++) items.push({ id: 'draw' + i, slot: i, locked: false, empty: !drawings[i] });
+  }
+  function drawHatTile(canvas, hatId, locked) {
+    const size = 64, pr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = size * pr; canvas.height = size * pr;
+    const c = canvas.getContext('2d');
+    c.setTransform(pr, 0, 0, pr, 0, 0);
+    c.clearRect(0, 0, size, size);
+    c.save(); c.translate(size / 2, size / 2 + 8); c.scale(1.1, 1.1);
+    E(c, 0, 4, 18, 18, 0, '#FFFFFF'); E(c, 0, 4, 16.5, 16.5, 0, '#FFF3E0');
+    E(c, 7, 0, 2, 2, 0, '#2B3A55'); E(c, 9, 7, 3, 1.8, 0, '#FFB3BF');
+    if (hatId === 'none') { c.font = '800 16px system-ui'; c.textAlign = 'center'; c.fillStyle = '#9AA5B1'; c.fillText('なし', 0, -20); }
+    else drawHat(c, hatId, 0, -14, { run: 0 });
+    if (locked) { c.globalCompositeOperation = 'source-atop'; c.fillStyle = '#9AA5B1'; c.fillRect(-100, -100, 200, 200); }
+    c.restore();
   }
   function openSelect(from) {
     returnTo = from;
     from.hidden = true;
     buildItems();
-    const stageSize = Math.max(140, Math.min(200, Math.floor(window.innerHeight * 0.26)));
-    $('selCv').dataset.size = String(stageSize);
+    tab = 'chars';
     const cur = items.findIndex(i => i.id === save.sel);
     selIdx = cur >= 0 ? cur : 0;
+    page = Math.floor(selIdx / PAGE);
+    renderTabs();
     renderSel();
     selectScreen.hidden = false;
   }
-  function renderHats() {
-    const row = $('hatRow');
-    row.innerHTML = '';
-    for (const h of HATS) {
-      const b = document.createElement('button');
-      const ok = h.ok(save);
-      b.className = 'tool' + (save.hat === h.id ? ' on' : '');
-      b.textContent = ok ? h.name : '🔒';
-      b.setAttribute('aria-label', ok ? h.name : 'まだ ひみつの ぼうし');
-      b.addEventListener('click', () => {
-        if (!ok) { $('hatCond').textContent = '🔒 ' + h.cond + ' で てにはいるよ'; return; }
-        save.hat = h.id; persist();
-        $('hatCond').textContent = '';
-        tone(700, 0.06, 'square', 0.04);
-        renderHats(); refreshHero();
-      });
-      row.appendChild(b);
-    }
-  }
+  function renderTabs() { document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab)); }
+  function pageCount() { return Math.max(1, Math.ceil((tab === 'chars' ? items.length : HATS.length) / PAGE)); }
   function renderSel() {
-    renderHats();
+    // preview + text
     const it = items[selIdx];
-    $('stage').classList.toggle('locked', !!it.locked);
-    const cond = $('selCond');
-    const choose = $('chooseBtn'), edit = $('editBtn');
+    const cond = $('selCond'), edit = $('editBtn');
     edit.hidden = true;
-    choose.disabled = false;
-    if (it.ch) {
-      $('selName').textContent = it.locked ? '？？？' : it.ch.name;
-      if (it.ch.special) $('selName').innerHTML = '<span class="tag">👑 とくべつ</span><br>' + (it.locked ? '？？？' : it.ch.name);
+    if (tab === 'hats') {
+      const h = HATS.find(x => x.id === save.hat) || HATS[0];
+      $('selName').textContent = nameOf(save.sel) + (h.id === 'none' ? '' : ' ＋ ' + h.name);
+      cond.textContent = 'ぼうしを タップして きせかえ';
+    } else if (it.ch) {
+      $('selName').textContent = it.locked ? '？？？' : it.ch.name + (it.ch.special ? ' 👑' : '');
       if (it.locked) {
-        const n = it.ch.need;
-        const cur = n.berries ? save.total : save.best, max = n.berries ? n.berries : n.meters;
-        cond.innerHTML = '<p>' + (n.berries ? '🍓 いちごを ぜんぶで ' + max + 'こ あつめよう' : '🏃 1かいで ' + max + 'm はしろう') + '</p>' +
-          '<div class="prog"><div class="bar"><i style="width:' + Math.min(100, cur / max * 100) + '%"></i></div><span class="lbl">あと ' + Math.max(0, max - cur) + (n.berries ? 'こ' : 'm') + '</span></div>';
-        choose.textContent = 'まだ ひみつ';
-        choose.disabled = true;
-      } else {
-        cond.innerHTML = save.sel === it.id ? '<p class="soft">いま えらんでいる なかま</p>' : '<p class="soft">&nbsp;</p>';
-        choose.textContent = save.sel === it.id ? 'この こで はしる！' : 'この こに する！';
-      }
+        const n = it.ch.need, cur = n.berries ? save.total : save.best, max = n.berries ? n.berries : n.meters;
+        cond.textContent = (n.berries ? '🍓 ぜんぶで ' + max + 'こ' : '🏃 1かいで ' + max + 'm') + '（あと ' + Math.max(0, max - cur) + (n.berries ? 'こ' : 'm') + '）';
+      } else cond.textContent = save.sel === it.id ? 'この こで はしるよ！' : 'タップで えらぶ';
     } else {
       $('selName').textContent = it.empty ? 'おえかき ' + (it.slot + 1) : nameOf(it.id);
-      if (it.empty) {
-        cond.innerHTML = '<p class="soft">じぶんで かいた こが はしるよ</p>';
-        choose.textContent = '✏️ かいてみる';
-      } else {
-        cond.innerHTML = save.sel === it.id ? '<p class="soft">いま えらんでいる なかま</p>' : '<p class="soft">&nbsp;</p>';
-        choose.textContent = save.sel === it.id ? 'この こで はしる！' : 'この こに する！';
-        edit.hidden = false;
-      }
+      cond.textContent = it.empty ? 'タップして かいてみよう' : 'この こで はしるよ！';
+      if (!it.empty) edit.hidden = false;
     }
+    // tiles
+    const tiles = $('tiles');
+    tiles.innerHTML = '';
+    const list = tab === 'chars' ? items : HATS;
+    const pc = pageCount();
+    page = Math.min(page, pc - 1);
+    const slice = list.slice(page * PAGE, page * PAGE + PAGE);
+    slice.forEach((x, i) => {
+      const gi = page * PAGE + i;
+      const d = document.createElement('button');
+      d.className = 'tile';
+      if (tab === 'chars') {
+        const locked = !!x.locked;
+        d.classList.toggle('sel', x.id === save.sel);
+        d.classList.toggle('locked', locked);
+        d.setAttribute('aria-label', locked ? 'まだ ひみつ' : (x.ch ? x.ch.name : (x.empty ? 'あたらしく かく' : nameOf(x.id))));
+        if (x.empty) { d.innerHTML = '<span class="pen">✏️</span>'; }
+        else {
+          const cv2 = document.createElement('canvas'); cv2.dataset.size = '64'; d.appendChild(cv2); drawPreview(cv2, x.id, locked);
+          if (locked) d.insertAdjacentHTML('beforeend', '<span class="lock">🔒</span>');
+          else if (x.ch && x.ch.need && !save.seenC.includes(x.id)) d.insertAdjacentHTML('beforeend', '<span class="new">NEW</span>');
+        }
+        d.addEventListener('click', () => {
+          selIdx = gi;
+          if (x.empty) { openEditor(x.slot); return; }
+          if (!locked) {
+            save.sel = x.id;
+            if (!save.seenC.includes(x.id)) save.seenC.push(x.id);
+            persist(); refreshStart();
+            tone(660, 0.06, 'square', 0.04); tone(990, 0.08, 'square', 0.04, 0, 0.06);
+          } else tone(300, 0.08, 'triangle', 0.04);
+          renderSel();
+        });
+      } else {
+        const ok = x.ok(save);
+        d.classList.toggle('sel', x.id === save.hat);
+        d.classList.toggle('locked', !ok);
+        d.setAttribute('aria-label', ok ? x.name : 'まだ ひみつの ぼうし');
+        const cv2 = document.createElement('canvas'); d.appendChild(cv2); drawHatTile(cv2, x.id, !ok);
+        if (!ok) d.insertAdjacentHTML('beforeend', '<span class="lock">🔒</span>');
+        else if (x.id !== 'none' && !save.seenH.includes(x.id)) d.insertAdjacentHTML('beforeend', '<span class="new">NEW</span>');
+        d.addEventListener('click', () => {
+          if (ok) {
+            save.hat = x.id;
+            if (!save.seenH.includes(x.id)) save.seenH.push(x.id);
+            persist(); refreshStart();
+            tone(700, 0.06, 'square', 0.04);
+            renderSel();
+          } else {
+            $('selCond').textContent = '🔒 ' + x.cond + ' で てにはいるよ';
+            tone(300, 0.08, 'triangle', 0.04);
+          }
+        });
+      }
+      tiles.appendChild(d);
+    });
+    for (let i = slice.length; i < PAGE; i++) { const sp = document.createElement('div'); tiles.appendChild(sp); }
     const dots = $('dots');
     dots.innerHTML = '';
-    items.forEach((x, i) => {
-      const d = document.createElement('span');
-      d.className = 'dot' + (i === selIdx ? ' on' : '') + (x.slot !== undefined ? ' pen' : '');
-      dots.appendChild(d);
-    });
-    drawPreview($('selCv'), it.id, it.locked);
+    for (let i = 0; i < pc; i++) { const dd = document.createElement('span'); dd.className = 'dot' + (i === page ? ' on' : ''); dots.appendChild(dd); }
+    $('prevBtn').style.visibility = pc > 1 ? 'visible' : 'hidden';
+    $('nextBtn').style.visibility = pc > 1 ? 'visible' : 'hidden';
   }
   function move(dir) {
-    selIdx = (selIdx + dir + items.length) % items.length;
+    const pc = pageCount();
+    page = (page + dir + pc) % pc;
     tone(dir > 0 ? 700 : 600, 0.05, 'square', 0.03);
     renderSel();
   }
   $('prevBtn').addEventListener('click', () => move(-1));
   $('nextBtn').addEventListener('click', () => move(1));
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { tab = t.dataset.tab; page = 0; renderTabs(); renderSel(); tone(560, 0.05, 'square', 0.03); }));
   let swipeX = null;
-  const stage = $('stage');
-  stage.addEventListener('pointerdown', e => { swipeX = e.clientX; });
-  stage.addEventListener('pointerup', e => {
+  const tilesEl = $('tiles');
+  tilesEl.addEventListener('pointerdown', e => { swipeX = e.clientX; });
+  tilesEl.addEventListener('pointerup', e => {
     if (swipeX === null) return;
     const dx = e.clientX - swipeX; swipeX = null;
-    if (dx < -30) move(1); else if (dx > 30) move(-1);
+    if (dx < -40) move(1); else if (dx > 40) move(-1);
   });
-  stage.addEventListener('pointercancel', () => { swipeX = null; });
-  $('chooseBtn').addEventListener('click', () => {
-    const it = items[selIdx];
-    if (it.locked) return;
-    if (it.empty) { openEditor(it.slot); return; }
-    save.sel = it.id; persist();
-    jingle([660, 990], 0.07, 0.1);
-    selectScreen.hidden = true;
-    refreshStart();
-    returnTo.hidden = false;
-  });
-  $('editBtn').addEventListener('click', () => openEditor(items[selIdx].slot));
+  tilesEl.addEventListener('pointercancel', () => { swipeX = null; });
+  $('editBtn').addEventListener('click', () => { const it = items[selIdx]; if (it && it.slot !== undefined) openEditor(it.slot); });
   $('backBtn').addEventListener('click', () => { selectScreen.hidden = true; returnTo.hidden = false; });
   $('pickBtn1').addEventListener('click', () => openSelect(startScreen));
   $('pickBtn2').addEventListener('click', () => openSelect(overScreen));
@@ -2286,7 +2347,9 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     jingle([523, 659, 784], 0.1, 0.14);
     drawScreen.hidden = true;
     buildItems();
+    tab = 'chars'; renderTabs();
     selIdx = items.findIndex(i => i.id === save.sel);
+    page = Math.floor(selIdx / PAGE);
     im.onload = () => renderSel();
     renderSel();
     refreshStart();
