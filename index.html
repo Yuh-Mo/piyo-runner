@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#9ADCF5">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
 <title>ぴよランナー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1027,6 +1029,9 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     tone(523, 0.1, 'square', 0.05);
     tone(784, 0.15, 'square', 0.05, 0, 0.1);
   }
+  // enter fullscreen on the very first touch anywhere (browsers need a tap first)
+  const firstTouch = () => { goFull(); document.removeEventListener('pointerdown', firstTouch, true); };
+  document.addEventListener('pointerdown', firstTouch, true);
   $('startBtn').addEventListener('click', start);
   $('againBtn').addEventListener('click', start);
 
