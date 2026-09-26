@@ -34,8 +34,9 @@ body{
 }
 .hud[hidden]{display:none}
 .hud-right{display:flex;gap:8px;align-items:center}
+.pill[hidden]{display:none}
 .pill{background:rgba(255,255,255,.88);border-radius:999px;padding:5px 14px;display:flex;gap:6px;align-items:center;white-space:nowrap}
-#sound{pointer-events:auto;border:0;font:inherit;cursor:pointer;color:inherit}
+#sound,#fsBtn{pointer-events:auto;border:0;font:inherit;cursor:pointer;color:inherit}
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:14px;background:rgba(43,58,85,.28)}
 .overlay[hidden]{display:none}
 .card{
@@ -101,6 +102,7 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     </div>
   </div>
   <div class="hud" style="justify-content:flex-end;top:auto;bottom:10px">
+    <button class="pill" id="fsBtn" aria-label="ぜんがめん きりかえ" hidden>ぜんがめん</button>
     <button class="pill" id="sound" aria-label="おと オン・オフ">🔊</button>
   </div>
 
@@ -630,7 +632,7 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     scale = Math.min(r.height / 360, r.width / 480);
     W = r.width / scale;
     H = r.height / scale;
-    groundY = H - 70;
+    groundY = H - Math.max(110, H * 0.24);
   }
   window.addEventListener('resize', resize);
   resize();
@@ -969,6 +971,17 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     for (const f of fruits) drawBerry(f);
     drawPlayer();
     drawPops();
+    if (state === 'play' && elapsed < 4) {
+      ctx.globalAlpha = Math.min(1, (4 - elapsed) / 1);
+      ctx.textAlign = 'center';
+      ctx.font = '800 26px "M PLUS Rounded 1c", system-ui, sans-serif';
+      ctx.lineWidth = 6; ctx.strokeStyle = '#2B3A55'; ctx.lineJoin = 'round';
+      const ty = Math.max(90, groundY * 0.42);
+      ctx.strokeText('どこを タッチしても ジャンプ！', W / 2, ty);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('どこを タッチしても ジャンプ！', W / 2, ty);
+      ctx.globalAlpha = 1;
+    }
   }
 
   let last = 0;
@@ -981,8 +994,30 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
   }
   requestAnimationFrame(frame);
 
+  // ---------- fullscreen ----------
+  const rootEl = document.documentElement;
+  const fsReq = rootEl.requestFullscreen || rootEl.webkitRequestFullscreen;
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  function goFull() {
+    if (!fsReq || fsEl()) return;
+    try { const r = fsReq.call(rootEl, { navigationUI: 'hide' }); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+  }
+  function exitFull() {
+    const ex = document.exitFullscreen || document.webkitExitFullscreen;
+    if (ex && fsEl()) { try { const r = ex.call(document); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
+  }
+  if (fsReq) {
+    const fsBtn = $('fsBtn');
+    fsBtn.hidden = false;
+    fsBtn.addEventListener('click', e => { e.stopPropagation(); fsEl() ? exitFull() : goFull(); });
+    const sync = () => { fsBtn.textContent = fsEl() ? 'もどす' : 'ぜんがめん'; setTimeout(resize, 50); };
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener('webkitfullscreenchange', sync);
+  }
+
   // ---------- controls ----------
   function start() {
+    goFull();
     reset();
     startScreen.hidden = true;
     overScreen.hidden = true;
@@ -995,6 +1030,7 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
   $('startBtn').addEventListener('click', start);
   $('againBtn').addEventListener('click', start);
 
+  cv.addEventListener('contextmenu', e => e.preventDefault());
   cv.addEventListener('pointerdown', e => {
     e.preventDefault();
     if (state === 'play') jump();
