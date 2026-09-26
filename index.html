@@ -1205,12 +1205,15 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
   function spawnNext() {
     const early = elapsed < 10;
     const x = W + 40;
-    const gapScale = Math.max(0.5, (save.adult ? 0.8 : 1) - level * 0.07);
+    const gapScale = Math.max(0.5, (save.adult ? 0.8 : (level < 1 ? 1.12 : 1)) - level * 0.07);
     const hard = save.adult ? level + 2 : level;
+    const gentle = !save.adult && level < 1; // first 1000m in kids mode: single obstacles only, no rock rows
     const pool = [['rock', Math.max(1.5, 4 - hard * 0.5)], ['berries', 3.5]];
-    if (!early) pool.push(['log', 1.5], ['rockArc', 2.5], ['lowTrap', 2], ['highLine', 1.5], ['hopRocks', 1.5], ['rockSand', 1.5]);
+    if (!early) pool.push(['log', 1.5], ['rockArc', 2.5]);
+    if (!early && !gentle) pool.push(['lowTrap', 2], ['highLine', 1.5], ['hopRocks', 1.5], ['rockSand', 1.5]);
     if (has('cloud')) pool.push(['cloudStairs', 1.5], ['cloudRow', 1.2]);
-    if (has('puddle')) pool.push(['puddle', 1], ['puddleLine', 2], ['puddleRock', 1.5]);
+    if (has('puddle')) pool.push(['puddle', 1], ['puddleLine', 2]);
+    if (has('puddle') && !gentle) pool.push(['puddleRock', 1.5]);
     const nearLevelEnd = (dist % 1000) > 940;
     if (has('kinoko') && !nearLevelEnd) pool.push(['kinokoArc', 1], ['kinokoGap', 1.2], ['kinoko2', 1]);
     if (starTime()) pool.push(['star', 1.6]);
