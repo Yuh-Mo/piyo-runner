@@ -36,9 +36,14 @@ body{
 }
 .hud[hidden]{display:none}
 .hud-left,.hud-right{display:flex;gap:8px;align-items:center}
-.hud-left{flex-direction:column;align-items:flex-start}
-.hud-right{flex-wrap:wrap;justify-content:flex-end;max-width:60%}
-#pauseBtn{padding:4px 12px;font-size:20px;line-height:1.2}
+.hud-col{flex-direction:column;align-items:flex-start;gap:6px}
+.hud-row{display:flex;justify-content:space-between;align-items:center;gap:6px;width:100%}
+.hud-right{flex:none}
+.pill{min-width:0}
+#hearts{letter-spacing:-2px}
+#missionPill{max-width:100%;overflow:hidden;text-overflow:ellipsis;display:block}
+#pauseBtn{padding:4px 10px;font-size:20px;line-height:1.2}
+@media (max-width:420px){.hud{font-size:16px}.pill{padding:4px 9px;gap:4px}}
 .pill[hidden]{display:none}
 .pill{background:rgba(255,255,255,.88);border-radius:999px;padding:5px 14px;display:flex;gap:6px;align-items:center;white-space:nowrap}
 .pill.mini{font-size:clamp(13px,3.4vw,16px);padding:4px 12px}
@@ -108,16 +113,16 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
 <div id="wrap">
   <canvas id="c" aria-label="ゲームがめん"></canvas>
 
-  <div class="hud" id="hud" hidden>
-    <div class="hud-left">
+  <div class="hud hud-col" id="hud" hidden>
+    <div class="hud-row">
       <div class="pill" id="hearts" aria-label="ライフ">❤️❤️❤️</div>
-      <div class="pill mini" id="missionPill"></div>
+      <div class="hud-right">
+        <div class="pill" id="berries">🍓 0</div>
+        <div class="pill" id="meters">0 m</div>
+        <button class="pill" id="pauseBtn" aria-label="ポーズ">⏸</button>
+      </div>
     </div>
-    <div class="hud-right">
-      <div class="pill" id="berries">🍓 0</div>
-      <div class="pill" id="meters">0 m</div>
-      <button class="pill" id="pauseBtn" aria-label="ポーズ">⏸</button>
-    </div>
+    <div class="pill mini" id="missionPill"></div>
   </div>
 
   <div class="overlay" id="pauseScreen" hidden>
