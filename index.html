@@ -989,17 +989,13 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     else if (id === 'rainbow') { const cols = ['#E94F5C', '#FFC93C', '#6CC06A', '#4AA8E0', '#A77BD8']; cols.forEach((col, i) => { E(c, x - 12, top - 1, 6 - i * 0.8, 4.5 - i * 0.6, -0.5, col); E(c, x - 2, top - 3, 6 - i * 0.8, 4.5 - i * 0.6, 0.5, col); }); E(c, x - 7, top - 1, 3, 3, 0, '#FFFFFF'); }
   }
   function drawCharHat(c, id, cx, cy, r, a) {
-    getDrawer(id)(c, cx, cy, r, a);
     const hat = save.hat || 'none';
+    if (isDrawId(id)) { drawCustom(c, imgs[+id.slice(4)], cx, cy, r, a, hat); return; }
+    getDrawer(id)(c, cx, cy, r, a);
     if (hat === 'none' || !HATS.find(h => h.id === hat)) return;
     const ch = byId(id);
     if (['kingshima', 'ousama', 'bigshima', 'yukidaruma'].includes(id)) return;
-    if (isDrawId(id)) {
-      const im = imgs[+id.slice(4)], S = 60, foot = cy + r;
-      const t = im && im.hatTop !== undefined ? im.hatTop : 0.05, fx = im && im.hatCx !== undefined ? im.hatCx : 0.5;
-      drawHat(c, hat, cx - S / 2 + fx * S, foot - S + t * S + 3, a);
-      return;
-    }
+    if (isDrawId(id)) return;
     if (ch.id === id && ch.special) {
       c.save(); c.translate(cx, cy + r); c.scale(BIG, BIG);
       drawHat(c, hat, 1, -r - r - bobOf(a) + 6, a);
@@ -1044,7 +1040,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     try { localStorage.setItem('piyo-draw', JSON.stringify(drawings)); return true; } catch (e) { return false; }
   }
   const isDrawId = id => /^draw\d$/.test(id);
-  function drawCustom(c, img, cx, cy, r, a) {
+  function drawCustom(c, img, cx, cy, r, a, hatId) {
     if (!img || !img.complete || !img.naturalWidth) { DRAW.piyo(c, cx, cy, r, a); return; }
     const S = 60, foot = cy + r;
     const hop = (a.air || a.still) ? 0 : Math.abs(Math.sin(a.run * 18)) * 3;
@@ -1053,6 +1049,10 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     c.translate(cx, foot - hop);
     c.rotate(tilt);
     c.drawImage(img, -S / 2, -S, S, S);
+    if (hatId && hatId !== 'none') {
+      const t = img.hatTop !== undefined ? img.hatTop : 0.05, fx = img.hatCx !== undefined ? img.hatCx : 0.5;
+      drawHat(c, hatId, -S / 2 + fx * S, -S + t * S + 9, a);
+    }
     c.restore();
   }
   function getDrawer(id) {
