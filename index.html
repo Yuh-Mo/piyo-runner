@@ -1175,6 +1175,9 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
     selectScreen.hidden = false;
   });
 
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
   refreshHero();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {});
 })();
