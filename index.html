@@ -291,8 +291,23 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     { id: 'iruka', name: 'いるか', need: { meters: 1200 } },
     { id: 'harinezumi', name: 'はりねずみ', need: { berries: 1300 } },
     { id: 'yukidaruma', name: 'ゆきだるま', need: { meters: 1500 } },
+    { id: 'kotori', name: 'ことり', need: { runs: 15 } },
+    { id: 'koala', name: 'コアラ', need: { berries: 1600 } },
+    { id: 'kame', name: 'かめ', need: { meters: 1800 } },
+    { id: 'tako', name: 'たこ', need: { berries: 2000 } },
+    { id: 'kingyo', name: 'きんぎょ', need: { meters: 2000 } },
+    { id: 'komori', name: 'こうもり', need: { missions: 20 } },
+    { id: 'kani', name: 'かに', need: { combo: 25 } },
+    { id: 'ushi', name: 'うし', need: { berries: 2400 } },
+    { id: 'lion', name: 'ライオン', need: { meters: 2500 } },
+    { id: 'zou', name: 'ぞう', need: { berries: 2800 } },
+    { id: 'kurage', name: 'くらげ', need: { runs: 35 } },
+    { id: 'kirin', name: 'きりん', need: { meters: 3000 } },
+    { id: 'wani', name: 'わに', need: { berries: 3300 } },
+    { id: 'saru', name: 'さる', need: { missions: 40 } },
+    { id: 'risu', name: 'りす', need: { berries: 3600 } },
   ].sort((x, y) => {
-    const k = c => !c.need ? 0 : (c.special ? 100000 : 0) + (c.need.berries ? c.need.berries * 3 : c.need.meters);
+    const k = c => !c.need ? 0 : (c.special ? 100000 : 0) + (c.need.berries ? c.need.berries * 3 : c.need.meters ? c.need.meters : c.need.runs ? c.need.runs * 200 : c.need.missions ? c.need.missions * 250 : c.need.combo * 250);
     return k(x) - k(y);
   });
   const byId = id => CHARS.find(c => c.id === id) || CHARS[0];
@@ -725,6 +740,175 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
       for (const [dx, dy] of [[0, 4], [1, 11]]) E(c, cx + dx, by + dy, 1.8, 1.8, 0, '#2B3A55');
     },
   });
+  Object.assign(DRAW, {
+    kotori(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#F29A38', 2.5);
+      const by = cy - bobOf(a);
+      c.fillStyle = '#3F8FD2'; tri(c, cx - r + 4, by - 2, cx - r - 16, by - 10, cx - r - 14, by + 4);
+      E(c, cx, by, r, r, 0, '#5FB3E6'); E(c, cx + 2, by + 8, r * 0.58, r * 0.42, 0, '#FFF3DC');
+      E(c, cx - 9, by + 2, 10, 6, -0.3 + flapOf(a), '#3F8FD2');
+      c.strokeStyle = '#3F8FD2'; c.lineWidth = 3; c.beginPath(); c.arc(cx - 3, by - r - 2, 4, Math.PI * 0.3, Math.PI * 1.4); c.stroke();
+      eye(c, cx + 9, by - 6, 3.2);
+      c.fillStyle = '#F29A38'; tri(c, cx + r - 4, by - 3, cx + r + 8, by, cx + r - 4, by + 3);
+      E(c, cx + 12, by + 4, 3.6, 2.2, 0, '#FF9EAA');
+    },
+    koala(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#8E99A6');
+      const by = cy - bobOf(a);
+      for (const ex of [cx - 14, cx + 13]) { E(c, ex, by - r + 8, 10, 10, 0, '#A7B0BD'); E(c, ex, by - r + 8, 6, 6, 0, '#F4B6C2'); }
+      E(c, cx, by, r, r, 0, '#B7BFC9'); E(c, cx, by + 8, r * 0.55, r * 0.4, 0, '#EEF1F5');
+      E(c, cx + r - 4, by + 2, 7, 9, 0, '#2B3A55');
+      eye(c, cx + 6, by - 6, 3);
+      E(c, cx + 8, by + 8, 3.4, 2, 0, '#FF9EAA');
+    },
+    kame(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#5FA35A', 5);
+      const by = cy - bobOf(a) + 4;
+      E(c, cx - 2, by + 2, r * 1.05, r * 0.72, 0, '#4E9A4C'); E(c, cx - 2, by + 2, r * 0.85, r * 0.55, 0, '#6CC06A');
+      c.strokeStyle = '#3F7F3A'; c.lineWidth = 2;
+      for (const [dx, dy] of [[-10, -2], [2, -8], [8, 2], [-4, 6]]) { c.beginPath(); c.moveTo(cx + dx - 6, by + dy); c.lineTo(cx + dx, by + dy - 5); c.lineTo(cx + dx + 6, by + dy); c.lineTo(cx + dx, by + dy + 5); c.closePath(); c.stroke(); }
+      E(c, cx + r - 2, by - 4, 10, 8, 0, '#8ED27A');
+      eye(c, cx + r + 1, by - 6, 2.6);
+      c.strokeStyle = '#2B3A55'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx + r + 2, by - 1, 3, 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
+      E(c, cx + r - 1, by + 1, 2.8, 1.6, 0, '#FFB3BF');
+    },
+    tako(c, cx, cy, r, a) {
+      const hop = (a.air || a.still) ? 0 : Math.abs(Math.sin(a.run * 12)) * 5;
+      const by = cy - hop - 2;
+      const wig = a.still ? 0 : Math.sin(a.run * 10) * 3;
+      c.strokeStyle = '#E8788A'; c.lineWidth = 5; c.lineCap = 'round';
+      for (let i = 0; i < 5; i++) { const x = cx - 14 + i * 7; c.beginPath(); c.moveTo(x, by + r * 0.6); c.quadraticCurveTo(x + (i % 2 ? 6 : -6) + wig, by + r + 6, x + (i % 2 ? -3 : 3), by + r + 12); c.stroke(); }
+      E(c, cx, by, r, r * 1.05, 0, '#F48FA0'); E(c, cx, by + 8, r * 0.6, r * 0.4, 0, '#FFC4CE');
+      eye(c, cx + 4, by - 4, 3.2); eye(c, cx + 15, by - 4, 3.2);
+      c.strokeStyle = '#2B3A55'; c.lineWidth = 1.6; c.beginPath(); c.arc(cx + 9.5, by + 4, 3, 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
+      E(c, cx, by + 5, 3.4, 2, 0, '#FF6B8A'); E(c, cx + 19, by + 5, 3.4, 2, 0, '#FF6B8A');
+    },
+    kingyo(c, cx, cy, r, a) {
+      const hop = (a.air || a.still) ? 0 : Math.abs(Math.sin(a.run * 12)) * 6;
+      const by = cy - hop + 3, sw = a.still ? 0 : Math.sin(a.run * 12) * 4;
+      c.fillStyle = '#FF8A3D';
+      c.beginPath(); c.moveTo(cx - r + 4, by); c.quadraticCurveTo(cx - r - 14, by - 16 + sw, cx - r - 20, by - 8 + sw); c.quadraticCurveTo(cx - r - 10, by + 2, cx - r - 20, by + 12 + sw); c.quadraticCurveTo(cx - r - 14, by + 12, cx - r + 4, by + 6); c.closePath(); c.fill();
+      E(c, cx, by, r * 1.1, r * 0.85, 0, '#FF9E4A'); E(c, cx + 4, by + 7, r * 0.65, r * 0.4, 0, '#FFE1C4');
+      E(c, cx - 2, by - r * 0.85, 8, 5, 0, '#FF8A3D');
+      E(c, cx + 4, by + 3, 7, 4, 0.5, '#FF8A3D');
+      eye(c, cx + 11, by - 5, 3.6);
+      E(c, cx + r + 2, by + 2, 3, 2, 0, '#E86A2A');
+      E(c, cx + 12, by + 5, 3, 1.8, 0, '#FFB3BF');
+    },
+    komori(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#5C4A7A', 2.5);
+      const by = cy - bobOf(a) - (a.still ? 0 : 3);
+      const f = flapOf(a) * 2;
+      c.fillStyle = '#6B5A9E';
+      c.save(); c.translate(cx - 8, by); c.rotate(-0.2 + f); c.beginPath(); c.moveTo(0, 0); c.lineTo(-30, -12); c.lineTo(-24, -2); c.lineTo(-30, 8); c.lineTo(-20, 6); c.lineTo(-24, 14); c.closePath(); c.fill(); c.restore();
+      c.fillStyle = '#7B6BB0'; tri(c, cx - 12, by - r + 8, cx - 9, by - r - 8, cx - 1, by - r + 3); tri(c, cx + 3, by - r + 3, cx + 11, by - r - 8, cx + 15, by - r + 8);
+      E(c, cx, by, r, r, 0, '#7B6BB0'); E(c, cx + 2, by + 8, r * 0.55, r * 0.4, 0, '#B7A9E0');
+      eye(c, cx + 9, by - 4, 3.2);
+      c.fillStyle = '#FFFFFF'; tri(c, cx + 5, by + 5, cx + 8, by + 5, cx + 6.5, by + 9); tri(c, cx + 12, by + 5, cx + 15, by + 5, cx + 13.5, by + 9);
+      E(c, cx + 11, by + 8, 3, 1.8, 0, '#FF9EAA');
+    },
+    kani(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#C9302C', 3);
+      const by = cy - bobOf(a) + 4, wv = a.still ? 0 : Math.sin(a.run * 14) * 3;
+      E(c, cx - r - 4, by - 10 + wv, 8, 6, 0.5, '#E94F5C'); E(c, cx + r + 4, by - 10 - wv, 8, 6, -0.5, '#E94F5C');
+      c.fillStyle = '#FFFFFF'; tri(c, cx - r - 10, by - 14 + wv, cx - r - 2, by - 12 + wv, cx - r - 6, by - 6 + wv); tri(c, cx + r + 10, by - 14 - wv, cx + r + 2, by - 12 - wv, cx + r + 6, by - 6 - wv);
+      E(c, cx, by, r * 1.15, r * 0.75, 0, '#E94F5C'); E(c, cx, by + 6, r * 0.75, r * 0.4, 0, '#FF8AA3');
+      c.strokeStyle = '#2B3A55'; c.lineWidth = 2; c.beginPath(); c.moveTo(cx + 3, by - 10); c.lineTo(cx + 3, by - 20); c.moveTo(cx + 14, by - 10); c.lineTo(cx + 14, by - 20); c.stroke();
+      eye(c, cx + 3, by - 21, 3); eye(c, cx + 14, by - 21, 3);
+      c.strokeStyle = '#2B3A55'; c.lineWidth = 1.6; c.beginPath(); c.arc(cx + 8.5, by - 2, 3, 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
+    },
+    ushi(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#8B5A34');
+      const by = cy - bobOf(a);
+      c.fillStyle = '#F2D7C1'; tri(c, cx - 14, by - r + 10, cx - 16, by - r - 6, cx - 6, by - r + 4); tri(c, cx + 6, by - r + 4, cx + 16, by - r - 6, cx + 14, by - r + 10);
+      E(c, cx - 15, by - r + 12, 6, 4, -0.4, '#E3B7A0'); E(c, cx + 15, by - r + 12, 6, 4, 0.4, '#E3B7A0');
+      E(c, cx, by, r, r, 0, '#FFFFFF'); E(c, cx, by, r + 1.5, r + 1.5, 0, '#DDE1E6'); E(c, cx, by, r, r, 0, '#FFFFFF');
+      E(c, cx - 9, by - 4, 9, 7, 0.3, '#2B2B33'); E(c, cx + 4, by + 12, 5, 4, 0, '#2B2B33');
+      E(c, cx + r - 5, by + 4, 10, 7, 0, '#F4B6C2'); E(c, cx + r - 8, by + 4, 1.8, 2, 0, '#C9707F'); E(c, cx + r - 2, by + 4, 1.8, 2, 0, '#C9707F');
+      eye(c, cx + 7, by - 6, 3.2);
+    },
+    lion(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#C9853A');
+      const by = cy - bobOf(a);
+      for (let i = 0; i < 12; i++) { const an = i / 12 * Math.PI * 2; E(c, cx + Math.cos(an) * (r + 4), by + Math.sin(an) * (r + 4), 8, 8, 0, '#C9702E'); }
+      E(c, cx, by, r, r, 0, '#F2B84B'); E(c, cx + 2, by + 8, r * 0.6, r * 0.42, 0, '#FFE1A8');
+      E(c, cx - 10, by - r + 8, 5, 5, 0, '#F2B84B'); E(c, cx + 10, by - r + 8, 5, 5, 0, '#F2B84B');
+      eye(c, cx + 8, by - 6, 3.2);
+      E(c, cx + r - 3, by + 3, 3.4, 2.6, 0, '#5B3A1E');
+      c.strokeStyle = '#5B3A1E'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(cx + r - 3, by + 5); c.lineTo(cx + r - 6, by + 9); c.moveTo(cx + r - 3, by + 5); c.lineTo(cx + r, by + 9); c.stroke();
+      E(c, cx + 8, by + 8, 3.4, 2, 0, '#FF9EAA');
+    },
+    zou(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#8E99A6', 5);
+      const by = cy - bobOf(a);
+      E(c, cx - 12, by - 2, 12, 14, 0.2, '#A7B0BD'); E(c, cx - 12, by - 2, 8, 10, 0.2, '#F4B6C2');
+      E(c, cx, by, r, r, 0, '#B7BFC9'); E(c, cx, by + 8, r * 0.55, r * 0.4, 0, '#DDE1E6');
+      c.strokeStyle = '#B7BFC9'; c.lineWidth = 9; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(cx + r - 6, by + 2); c.quadraticCurveTo(cx + r + 10, by + 6, cx + r + 8, by + 18 + (a.air ? -6 : 0)); c.stroke();
+      eye(c, cx + 9, by - 6, 3.2);
+      E(c, cx + 8, by + 6, 3.4, 2, 0, '#FF9EAA');
+    },
+    kurage(c, cx, cy, r, a) {
+      const by = cy + (a.still ? 0 : Math.sin(a.run * 5) * 4) - 2;
+      const wig = a.still ? 0 : Math.sin(a.run * 6) * 4;
+      c.strokeStyle = '#C9A6F2'; c.lineWidth = 4; c.lineCap = 'round';
+      for (let i = 0; i < 5; i++) { const x = cx - 14 + i * 7; c.beginPath(); c.moveTo(x, by + 8); c.quadraticCurveTo(x + (i % 2 ? 5 : -5) + wig, by + r + 4, x + (i % 2 ? -3 : 3), by + r + 14); c.stroke(); }
+      c.fillStyle = '#DCC6FF'; c.beginPath(); c.arc(cx, by + 2, r, Math.PI, 0); c.quadraticCurveTo(cx + r * 0.5, by + 10, cx, by + 8); c.quadraticCurveTo(cx - r * 0.5, by + 10, cx - r, by + 2); c.closePath(); c.fill();
+      E(c, cx - 8, by - 10, 5, 3, -0.4, '#FFFFFF');
+      eye(c, cx + 4, by - 2, 2.6); eye(c, cx + 14, by - 2, 2.6);
+      c.strokeStyle = '#2B3A55'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx + 9, by + 2, 2.4, 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
+      E(c, cx, by + 3, 3, 1.8, 0, '#FFB3BF'); E(c, cx + 18, by + 3, 3, 1.8, 0, '#FFB3BF');
+    },
+    kirin(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#C9853A');
+      const by = cy - bobOf(a);
+      E(c, cx - 4, by + 6, r * 0.9, r * 0.7, 0, '#F2C86A');
+      for (const [dx, dy] of [[-12, 4], [-2, 12], [-10, 14]]) E(c, cx + dx, by + dy, 4, 3.5, 0, '#C9853A');
+      c.fillStyle = '#F2C86A'; c.beginPath(); c.moveTo(cx + 4, by + 4); c.lineTo(cx + 8, by - r - 6); c.lineTo(cx + 20, by - r - 6); c.lineTo(cx + 16, by + 6); c.closePath(); c.fill();
+      c.fillStyle = '#8B5A34'; for (let i = 0; i < 5; i++) c.fillRect(cx + 6 + i * 0.8, by - r - 6 + i * 6, 3, 4);
+      E(c, cx + 16, by - r - 6, 11, 8, 0, '#F2C86A');
+      c.strokeStyle = '#8B5A34'; c.lineWidth = 2.5; c.beginPath(); c.moveTo(cx + 12, by - r - 12); c.lineTo(cx + 11, by - r - 20); c.moveTo(cx + 19, by - r - 12); c.lineTo(cx + 20, by - r - 20); c.stroke();
+      E(c, cx + 11, by - r - 21, 2.2, 2.2, 0, '#8B5A34'); E(c, cx + 20, by - r - 21, 2.2, 2.2, 0, '#8B5A34');
+      E(c, cx + 24, by - r - 4, 6, 5, 0, '#F7DFA6');
+      eye(c, cx + 16, by - r - 8, 2.6);
+      E(c, cx + 13, by - r - 2, 2.6, 1.6, 0, '#FF9EAA');
+    },
+    wani(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#4E9A4C', 5);
+      const by = cy - bobOf(a) + 4;
+      c.fillStyle = '#6CC06A'; c.beginPath(); c.moveTo(cx - r + 2, by - 4); c.quadraticCurveTo(cx - r - 18, by - 2, cx - r - 24, by + 8); c.quadraticCurveTo(cx - r - 12, by + 8, cx - r + 2, by + 10); c.closePath(); c.fill();
+      E(c, cx - 2, by + 2, r * 1.05, r * 0.7, 0, '#6CC06A'); E(c, cx, by + 8, r * 0.7, r * 0.35, 0, '#CFEFB0');
+      c.fillStyle = '#4E9A4C'; for (let i = 0; i < 4; i++) tri(c, cx - 16 + i * 8, by - 12, cx - 12 + i * 8, by - 19, cx - 8 + i * 8, by - 12);
+      E(c, cx + r + 2, by + 2, 14, 7, 0, '#6CC06A');
+      c.fillStyle = '#FFFFFF'; for (let i = 0; i < 3; i++) tri(c, cx + r - 4 + i * 6, by + 6, cx + r - 1 + i * 6, by + 6, cx + r - 2.5 + i * 6, by + 9);
+      E(c, cx + 8, by - 12, 6, 6, 0, '#6CC06A'); eye(c, cx + 9, by - 13, 3);
+      E(c, cx + r + 10, by, 1.6, 1.6, 0, '#2B3A55');
+    },
+    saru(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#8B5A34');
+      const by = cy - bobOf(a), sw = a.still ? 0 : Math.sin(a.run * 10) * 3;
+      c.strokeStyle = '#A8703F'; c.lineWidth = 4; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(cx - r + 4, by + 6); c.quadraticCurveTo(cx - r - 14, by + 4, cx - r - 12 + sw, by - 12); c.quadraticCurveTo(cx - r - 10, by - 18, cx - r - 4 + sw, by - 14); c.stroke();
+      for (const ex of [cx - 14, cx + 13]) { E(c, ex, by - 2, 7, 7, 0, '#A8703F'); E(c, ex, by - 2, 4, 4, 0, '#F2D7C1'); }
+      E(c, cx, by, r, r, 0, '#A8703F');
+      E(c, cx + 3, by + 2, r * 0.7, r * 0.62, 0, '#F2D7C1');
+      eye(c, cx + 7, by - 4, 3);
+      E(c, cx + 14, by + 3, 2, 1.4, 0, '#8B5A34');
+      c.strokeStyle = '#8B5A34'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx + 10, by + 6, 4, 0.1 * Math.PI, 0.9 * Math.PI); c.stroke();
+      E(c, cx + 2, by + 6, 3, 1.8, 0, '#FF9EAA');
+    },
+    risu(c, cx, cy, r, a) {
+      legs(c, cx, cy, r, a, '#B8743A', 3);
+      const by = cy - bobOf(a), sw = a.still ? 0 : Math.sin(a.run * 8) * 3;
+      E(c, cx - r - 6 + sw, by - 6, 12, 18, 0.5, '#D98E4C'); E(c, cx - r - 9 + sw, by - 8, 6, 11, 0.5, '#F2C89A');
+      c.fillStyle = '#D98E4C'; tri(c, cx - 12, by - r + 9, cx - 9, by - r - 5, cx - 2, by - r + 3); tri(c, cx + 3, by - r + 3, cx + 10, by - r - 5, cx + 14, by - r + 9);
+      E(c, cx, by, r, r, 0, '#E5A05A'); E(c, cx + 3, by + 8, r * 0.6, r * 0.42, 0, '#FFEBCF');
+      eye(c, cx + 9, by - 5, 3.2);
+      E(c, cx + r - 2, by + 3, 2.6, 2, 0, '#5B3A1E');
+      c.fillStyle = '#FFFFFF'; c.fillRect(cx + r - 4, by + 6, 2.4, 3.5); c.fillRect(cx + r - 1, by + 6, 2.4, 3.5);
+      E(c, cx + 9, by + 8, 3.2, 2, 0, '#FF9EAA');
+    },
+  });
   DRAW.kingshima = bigWrap(DRAW.shimaenaga, {
     behind: (c, by, r, a) => {
       const wv = a.still ? 0 : Math.sin(a.run * 8) * 3;
@@ -762,6 +946,18 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     { id: 'unicorn', name: '🦄 ユニコーン', ok: st => st.adultBest >= 2000, cond: 'おとなモードで 2000m' },
     { id: 'wizard', name: '🧙 まほうのぼうし', ok: st => st.missions >= 25, cond: 'おだいを 25かい クリア' },
     { id: 'rainbow', name: '🌈 にじのりぼん', ok: st => st.maxCombo >= 50, cond: 'コンボ ×50' },
+    { id: 'bunny', name: '🐰 うさみみ', ok: st => st.runs >= 8, cond: '8かい あそぶ' },
+    { id: 'sunflower', name: '🌻 ひまわり', ok: st => st.missions >= 8, cond: 'おだいを 8かい クリア' },
+    { id: 'catears', name: '🐱 ねこみみ', ok: st => st.maxCombo >= 15, cond: 'コンボ ×15' },
+    { id: 'donut', name: '🍩 ドーナツ', ok: st => st.total >= 1500, cond: 'いちご ぜんぶで 1500こ' },
+    { id: 'balloon', name: '🎈 ふうせん', ok: st => st.runs >= 20, cond: '20かい あそぶ' },
+    { id: 'clover', name: '🍀 クローバー', ok: st => st.missions >= 18, cond: 'おだいを 18かい クリア' },
+    { id: 'umbrella', name: '☂️ かさ', ok: st => st.best >= 2000, cond: '1かいで 2000m' },
+    { id: 'goldcrown', name: '👑 きんのおうかん', ok: st => st.best >= 3000, cond: '1かいで 3000m' },
+    { id: 'goldribbon', name: '🎀 きんのりぼん', ok: st => st.total >= 5000, cond: 'いちご ぜんぶで 5000こ' },
+    { id: 'gradcap', name: '🎓 がくしぼう', ok: st => st.missions >= 50, cond: 'おだいを 50かい クリア' },
+    { id: 'snowtiara', name: '❄️ ゆきのティアラ', ok: st => st.adultBest >= 3000, cond: 'おとなモードで 3000m' },
+    { id: 'santa', name: '🎅 サンタぼうし', ok: st => st.runs >= 60, cond: '60かい あそぶ' },
   ];
   function drawHat(c, id, x, top, a) {
     if (id === 'ribbon') { E(c, x - 12, top - 1, 6, 4.5, -0.5, '#FF6B8A'); E(c, x - 2, top - 3, 6, 4.5, 0.5, '#FF6B8A'); E(c, x - 7, top - 1, 3, 3, 0, '#E0405F'); }
@@ -778,6 +974,18 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     else if (id === 'pumpkin') { E(c, x, top - 5, 15, 11, 0, '#F2913D'); c.strokeStyle = '#D9722A'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x - 6, top - 15); c.quadraticCurveTo(x - 9, top - 5, x - 6, top + 5); c.moveTo(x + 6, top - 15); c.quadraticCurveTo(x + 9, top - 5, x + 6, top + 5); c.stroke(); c.fillStyle = '#5FA35A'; c.fillRect(x - 2, top - 20, 4, 6); }
     else if (id === 'unicorn') { c.fillStyle = '#FFE38A'; tri(c, x - 5, top + 2, x + 3, top - 20, x + 6, top + 2); c.strokeStyle = '#F2B233'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x - 3, top - 4); c.lineTo(x + 4, top - 6); c.moveTo(x - 1, top - 10); c.lineTo(x + 4, top - 12); c.stroke(); }
     else if (id === 'wizard') { c.fillStyle = '#7B5CC7'; tri(c, x - 14, top + 2, x + 2, top - 28, x + 14, top + 2); E(c, x, top + 1, 20, 4, 0, '#5E44A6'); star4(c, x + 2, top - 12, 4, '#FFE38A'); }
+    else if (id === 'bunny') { for (const [dx, rot] of [[-7, -0.15], [6, 0.15]]) { E(c, x + dx, top - 12, 5.5, 15, rot, '#FFFFFF'); E(c, x + dx, top - 12, 2.8, 10, rot, '#FFC4CE'); } }
+    else if (id === 'sunflower') { for (let k = 0; k < 10; k++) E(c, x + Math.cos(k * 0.628) * 9, top - 6 + Math.sin(k * 0.628) * 9, 3.5, 2.2, k * 0.628, '#FFC93C'); E(c, x, top - 6, 5, 5, 0, '#6B4A1E'); }
+    else if (id === 'catears') { c.fillStyle = '#2B3A55'; tri(c, x - 14, top + 6, x - 11, top - 10, x - 2, top + 2); tri(c, x + 3, top + 2, x + 12, top - 10, x + 15, top + 6); c.fillStyle = '#FF9EAA'; tri(c, x - 11, top + 4, x - 10, top - 4, x - 5, top + 2); tri(c, x + 6, top + 2, x + 11, top - 4, x + 12, top + 4); }
+    else if (id === 'donut') { c.save(); c.translate(x, top - 4); c.scale(1, 0.55); c.lineWidth = 9; c.strokeStyle = '#E3A15A'; c.beginPath(); c.arc(0, 0, 11, 0, Math.PI * 2); c.stroke(); c.lineWidth = 6; c.strokeStyle = '#F48FA0'; c.beginPath(); c.arc(0, -1, 11, Math.PI, Math.PI * 2); c.stroke(); c.restore(); for (const [dx, dy, col] of [[-8, -9, '#FFE38A'], [-2, -12, '#6CC06A'], [5, -10, '#4AA8E0'], [9, -7, '#FFFFFF']]) E(c, x + dx, top + dy, 1.6, 1, 0.6, col); }
+    else if (id === 'balloon') { c.strokeStyle = '#2B3A55'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(x + 2, top + 2); c.lineTo(x + 4, top - 14); c.stroke(); E(c, x + 5, top - 24, 9, 11, 0, '#E94F5C'); E(c, x + 2, top - 28, 3, 4, -0.5, '#FF9EAA'); c.fillStyle = '#E94F5C'; tri(c, x + 2, top - 13, x + 6, top - 13, x + 4, top - 10); }
+    else if (id === 'clover') { for (let k = 0; k < 4; k++) E(c, x + Math.cos(k * 1.571 + 0.785) * 5, top - 8 + Math.sin(k * 1.571 + 0.785) * 5, 4.5, 4.5, 0, '#6CC06A'); c.strokeStyle = '#4E9A4C'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, top - 3); c.lineTo(x + 3, top + 4); c.stroke(); }
+    else if (id === 'umbrella') { c.fillStyle = '#4AA8E0'; c.beginPath(); c.arc(x, top - 6, 18, Math.PI, 0); c.fill(); c.fillStyle = '#8FD1F5'; for (let k = 0; k < 3; k++) { c.beginPath(); c.arc(x - 12 + k * 12, top - 6, 6, Math.PI, 0); c.fill(); } c.strokeStyle = '#2B3A55'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, top - 24); c.lineTo(x, top - 6); c.stroke(); }
+    else if (id === 'goldcrown') { c.fillStyle = '#F2B233'; c.beginPath(); c.moveTo(x - 14, top + 4); c.lineTo(x - 14, top - 10); c.lineTo(x - 7, top - 3); c.lineTo(x, top - 14); c.lineTo(x + 7, top - 3); c.lineTo(x + 14, top - 10); c.lineTo(x + 14, top + 4); c.closePath(); c.fill(); c.fillStyle = '#FFE38A'; c.fillRect(x - 14, top, 28, 4); E(c, x, top - 6, 2.5, 2.5, 0, '#E94F5C'); E(c, x - 8, top - 3, 1.8, 1.8, 0, '#4AA8E0'); E(c, x + 8, top - 3, 1.8, 1.8, 0, '#6CC06A'); }
+    else if (id === 'goldribbon') { E(c, x - 12, top - 1, 7, 5, -0.5, '#F2B233'); E(c, x - 2, top - 3, 7, 5, 0.5, '#F2B233'); E(c, x - 7, top - 1, 3.2, 3.2, 0, '#FFE38A'); star4(c, x - 7, top - 8, 3, '#FFFFFF'); }
+    else if (id === 'gradcap') { E(c, x, top + 1, 13, 5, 0, '#2B3A55'); c.fillStyle = '#2B3A55'; c.save(); c.translate(x, top - 6); c.rotate(0.1); c.fillRect(-18, -5, 36, 9); c.restore(); c.strokeStyle = '#FFC93C'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, top - 6); c.lineTo(x + 14, top - 4); c.lineTo(x + 15, top + 4); c.stroke(); E(c, x + 15, top + 5, 2, 2.5, 0, '#FFC93C'); }
+    else if (id === 'snowtiara') { c.strokeStyle = '#8FD1F5'; c.lineWidth = 2.5; c.beginPath(); c.moveTo(x - 14, top + 3); c.quadraticCurveTo(x, top - 2, x + 14, top + 3); c.stroke(); for (const [dx, dy, sz] of [[-8, -5, 3], [0, -10, 4.5], [8, -5, 3]]) { c.strokeStyle = '#FFFFFF'; c.lineWidth = 1.5; for (let k = 0; k < 3; k++) { c.beginPath(); c.moveTo(x + dx - Math.cos(k * 1.047) * sz, top + dy - Math.sin(k * 1.047) * sz); c.lineTo(x + dx + Math.cos(k * 1.047) * sz, top + dy + Math.sin(k * 1.047) * sz); c.stroke(); } } }
+    else if (id === 'santa') { c.fillStyle = '#E94F5C'; c.beginPath(); c.moveTo(x - 15, top + 2); c.quadraticCurveTo(x - 4, top - 22, x + 14, top - 18); c.lineTo(x + 15, top + 2); c.closePath(); c.fill(); c.fillStyle = '#FFFFFF'; c.beginPath(); c.moveTo(x - 17, top + 2); c.lineTo(x + 17, top + 2); c.lineTo(x + 17, top + 7); c.lineTo(x - 17, top + 7); c.closePath(); c.fill(); E(c, x + 15, top - 18, 4, 4, 0, '#FFFFFF'); }
     else if (id === 'rainbow') { const cols = ['#E94F5C', '#FFC93C', '#6CC06A', '#4AA8E0', '#A77BD8']; cols.forEach((col, i) => { E(c, x - 12, top - 1, 6 - i * 0.8, 4.5 - i * 0.6, -0.5, col); E(c, x - 2, top - 3, 6 - i * 0.8, 4.5 - i * 0.6, 0.5, col); }); E(c, x - 7, top - 1, 3, 3, 0, '#FFFFFF'); }
   }
   function drawCharHat(c, id, cx, cy, r, a) {
@@ -786,14 +994,22 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     if (hat === 'none' || !HATS.find(h => h.id === hat)) return;
     const ch = byId(id);
     if (['kingshima', 'ousama', 'bigshima', 'yukidaruma'].includes(id)) return;
-    if (isDrawId(id)) { drawHat(c, hat, cx, cy + r - 58, a); return; }
+    if (isDrawId(id)) {
+      const im = imgs[+id.slice(4)], S = 60, foot = cy + r;
+      const t = im && im.hatTop !== undefined ? im.hatTop : 0.05, fx = im && im.hatCx !== undefined ? im.hatCx : 0.5;
+      drawHat(c, hat, cx - S / 2 + fx * S, foot - S + t * S + 3, a);
+      return;
+    }
     if (ch.id === id && ch.special) {
       c.save(); c.translate(cx, cy + r); c.scale(BIG, BIG);
       drawHat(c, hat, 1, -r - r - bobOf(a) + 6, a);
       c.restore();
       return;
     }
-    const lift = ({ kaeru: 10, usagi: 12, nezumi: 4, fukurou: 4, kitsune: 6, neko: 6, buta: 4, iruka: 8, harinezumi: 6, tamago: 4 })[id] || 0;
+    const lift = ({ kaeru: 10, usagi: 12, nezumi: 4, fukurou: 4, kitsune: 6, neko: 6, buta: 4, iruka: 8, harinezumi: 6, tamago: 4, koala: 6, tako: 2, kingyo: 4, komori: 6, kani: 18, ushi: 5, lion: 8, zou: -4, kirin: 4, wani: 16, saru: 2, risu: 5, kurage: 2, kame: 12, kotori: 3 })[id] || 0;
+    if (id === 'kirin') { drawHat(c, hat, cx + 16, cy - r - bobOf(a) - 14 - 6 - lift, a); return; }
+    if (id === 'kame') { drawHat(c, hat, cx + r - 2, cy - r - bobOf(a) + 28 - lift, a); return; }
+    if (id === 'wani') { drawHat(c, hat, cx + 8, cy - r - bobOf(a) + 16 - lift, a); return; }
     drawHat(c, hat, cx + 1, cy - r - bobOf(a) + 6 - lift, a);
   }
 
@@ -803,7 +1019,27 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   try { drawings = JSON.parse(localStorage.getItem('piyo-draw') || '[]'); } catch (e) { drawings = []; }
   if (!Array.isArray(drawings)) drawings = [];
   while (drawings.length < SLOTS) drawings.push(null);
-  const imgs = drawings.map(u => { if (!u) return null; const im = new Image(); im.src = u; return im; });
+  // find where the drawing's head is so hats can sit on it
+  function analyzeImg(im) {
+    try {
+      const n = 160, oc = document.createElement('canvas'); oc.width = n; oc.height = n;
+      const o = oc.getContext('2d'); o.drawImage(im, 0, 0, n, n);
+      const d = o.getImageData(0, 0, n, n).data;
+      let top = -1;
+      for (let y = 0; y < n && top < 0; y++) for (let x = 0; x < n; x++) if (d[(y * n + x) * 4 + 3] > 20) { top = y; break; }
+      if (top < 0) return;
+      let sx = 0, cnt = 0;
+      for (let y = top; y < Math.min(n, top + 14); y++) for (let x = 0; x < n; x++) if (d[(y * n + x) * 4 + 3] > 20) { sx += x; cnt++; }
+      im.hatTop = top / n; im.hatCx = cnt ? sx / cnt / n : 0.5;
+    } catch (e) {}
+  }
+  const imgs = drawings.map(u => {
+    if (!u) return null;
+    const im = new Image();
+    im.onload = () => analyzeImg(im);
+    im.src = u;
+    return im;
+  });
   function persistDraw() {
     try { localStorage.setItem('piyo-draw', JSON.stringify(drawings)); return true; } catch (e) { return false; }
   }
@@ -838,7 +1074,20 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   function persist() { try { localStorage.setItem('piyo-save', JSON.stringify(save)); } catch (e) {} }
   function isUnlocked(ch) {
     if (!ch.need) return true;
-    return ch.need.berries ? save.total >= ch.need.berries : save.best >= ch.need.meters;
+    const n = ch.need;
+    if (n.berries) return save.total >= n.berries;
+    if (n.meters) return save.best >= n.meters;
+    if (n.runs) return save.runs >= n.runs;
+    if (n.missions) return save.missions >= n.missions;
+    if (n.combo) return save.maxCombo >= n.combo;
+    return false;
+  }
+  function needInfo(n) {
+    if (n.berries) return { cur: save.total, max: n.berries, text: '🍓 ぜんぶで ' + n.berries + 'こ', unit: 'こ' };
+    if (n.meters) return { cur: save.best, max: n.meters, text: '🏃 1かいで ' + n.meters + 'm', unit: 'm' };
+    if (n.runs) return { cur: save.runs, max: n.runs, text: '🎮 ' + n.runs + 'かい あそぶ', unit: 'かい' };
+    if (n.missions) return { cur: save.missions, max: n.missions, text: '✅ おだいを ' + n.missions + 'かい クリア', unit: 'かい' };
+    return { cur: save.maxCombo, max: n.combo, text: '🔥 コンボ ×' + n.combo, unit: '' };
   }
   function validSel(id) {
     if (isDrawId(id)) return !!drawings[+id.slice(4)];
@@ -2097,8 +2346,8 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     } else if (it.ch) {
       $('selName').textContent = it.locked ? '？？？' : it.ch.name + (it.ch.special ? ' 👑' : '');
       if (it.locked) {
-        const n = it.ch.need, cur = n.berries ? save.total : save.best, max = n.berries ? n.berries : n.meters;
-        cond.textContent = (n.berries ? '🍓 ぜんぶで ' + max + 'こ' : '🏃 1かいで ' + max + 'm') + '（あと ' + Math.max(0, max - cur) + (n.berries ? 'こ' : 'm') + '）';
+        const ni = needInfo(it.ch.need);
+        cond.textContent = ni.text + '（あと ' + Math.max(0, ni.max - ni.cur) + ni.unit + '）';
       } else cond.textContent = save.sel === it.id ? 'この こで はしるよ！' : 'タップで えらぶ';
     } else {
       $('selName').textContent = it.empty ? 'おえかき ' + (it.slot + 1) : nameOf(it.id);
@@ -2341,6 +2590,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
       return;
     }
     const im = new Image();
+    im.onload = () => { analyzeImg(im); renderSel(); };
     im.src = url;
     imgs[editSlot] = im;
     save.sel = 'draw' + editSlot; persist();
@@ -2350,7 +2600,6 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     tab = 'chars'; renderTabs();
     selIdx = items.findIndex(i => i.id === save.sel);
     page = Math.floor(selIdx / PAGE);
-    im.onload = () => renderSel();
     renderSel();
     refreshStart();
     selectScreen.hidden = false;
