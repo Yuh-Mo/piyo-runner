@@ -120,6 +120,8 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
 .dot.on{background:var(--accent);transform:scale(1.4)}
 .dot.pen{background:#A77BD8}
 .tag{display:inline-block;background:#FFE9A8;color:#8A5A00;border-radius:999px;padding:2px 12px;font-size:14px;font-weight:800}
+.statline{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;font-size:13px;font-weight:800;background:var(--chip);border-radius:14px;padding:6px 8px}
+.statline span{white-space:nowrap}
 .ranklist{display:flex;flex-direction:column;gap:6px;margin-top:6px}
 .rankrow{display:flex;align-items:center;gap:8px;background:var(--chip);border-radius:14px;padding:3px 8px;text-align:left}
 .rankrow .medal{font-size:22px;width:30px;text-align:center}
@@ -213,12 +215,11 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   <div class="overlay" id="rankScreen" hidden>
     <div class="card">
       <h2>🏆 きろく</h2>
+      <div class="statline" id="statLine"></div>
       <div class="tools" id="rankWorlds"></div>
       <div class="tools" id="rankModes" style="margin-top:6px"></div>
-      <p class="subhead" style="margin-top:10px">🏃 きょり</p>
+      <p class="subhead" style="margin-top:8px">🏃 きょり トップ3</p>
       <div class="ranklist" id="rankDist"></div>
-      <p class="subhead" style="margin-top:10px">🔥 コンボ</p>
-      <div class="ranklist" id="rankCombo"></div>
       <div class="btns">
         <button class="go" id="rankBack">もどる</button>
         <button class="sub" id="saveScreenBtn">💾 データの ひきつぎ</button>
@@ -452,6 +453,12 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     { id: 'kaiju', name: 'おおきなカバ', need: { dist: 60000 }, special: true },
     { id: 'phoenix', name: 'ほのおのとり', need: { berries: 18000 }, special: true },
     { id: 'galaxy', name: 'ぎんがくもっこ', need: { berries: 21000 }, special: true },
+    { id: 'sakurashima', name: 'さくらシマエナガ', need: { berries: 1900 } },
+    { id: 'yukishima', name: 'ゆきシマエナガ', need: { meters: 3100 } },
+    { id: 'heartshima', name: 'ハートシマエナガ', need: { missions: 12 } },
+    { id: 'nemushima', name: 'ねむねむシマエナガ', need: { runs: 20 } },
+    { id: 'futagoshima', name: 'ふたごシマエナガ', need: { combo: 22 } },
+    { id: 'nijishima', name: 'にじシマエナガ', need: { berries: 8000 }, special: true },
   ].sort((x, y) => {
     const k = c => !c.need ? 0 : (c.special ? 100000 : 0) + (c.need.berries ? c.need.berries * 3 : c.need.meters ? c.need.meters : c.need.runs ? c.need.runs * 200 : c.need.missions ? c.need.missions * 250 : c.need.combo ? c.need.combo * 250 : c.need.adult ? c.need.adult * 2 : c.need.dist ? c.need.dist / 4 : 9000);
     return k(x) - k(y);
@@ -809,6 +816,23 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     c.moveTo(x, y - s); c.quadraticCurveTo(x, y, x + s, y); c.quadraticCurveTo(x, y, x, y + s); c.quadraticCurveTo(x, y, x - s, y); c.quadraticCurveTo(x, y, x, y - s);
     c.fill();
   }
+  function shimaVariant(opts) {
+    return (c, cx, cy, r, a) => {
+      if (opts.behind) opts.behind(c, cx, cy, r, a);
+      if (opts.tint) { c.save(); try { c.filter = opts.tint; } catch (e) {} DRAW.shimaenaga(c, cx, cy, r, a); try { c.filter = 'none'; } catch (e) {} c.restore(); }
+      else DRAW.shimaenaga(c, cx, cy, r, a);
+      const by = cy - bobOf(a);
+      if (opts.front) opts.front(c, cx, by, r, a);
+    };
+  }
+  const flower = (c, x, y, s, col, mid) => { for (let k = 0; k < 5; k++) E(c, x + Math.cos(k * 1.257) * s, y + Math.sin(k * 1.257) * s, s * 0.7, s * 0.7, 0, col); E(c, x, y, s * 0.5, s * 0.5, 0, mid); };
+  const heart = (c, x, y, s, col) => { c.fillStyle = col; c.beginPath(); c.moveTo(x, y + s); c.bezierCurveTo(x - s * 1.3, y - s * 0.2, x - s * 0.9, y - s * 1.1, x, y - s * 0.4); c.bezierCurveTo(x + s * 0.9, y - s * 1.1, x + s * 1.3, y - s * 0.2, x, y + s); c.fill(); };
+  DRAW.sakurashima = shimaVariant({ tint: 'sepia(0.25) hue-rotate(300deg) saturate(1.2)', front: (c, cx, by, r, a) => { flower(c, cx + 2, by - r - 4, 4, '#F7A8C4', '#FFE38A'); flower(c, cx - r - 6, by + 10 + Math.sin(a.run * 3) * 3, 3, '#F7A8C4', '#FFE38A'); } });
+  DRAW.yukishima = shimaVariant({ front: (c, cx, by, r, a) => { c.fillStyle = '#4AA8E0'; c.beginPath(); c.moveTo(cx - 14, by - r + 4); c.quadraticCurveTo(cx - 6, by - r - 18, cx + 14, by - r - 14); c.lineTo(cx + 14, by - r + 4); c.closePath(); c.fill(); E(c, cx + 14, by - r - 14, 4, 4, 0, '#FFFFFF'); c.fillStyle = '#FFFFFF'; c.fillRect(cx - 16, by - r + 2, 32, 5); for (let i = 0; i < 5; i++) { const fx = cx - 30 + ((i * 17 + a.run * 12) % 60), fy = by - 30 + ((i * 23 + a.run * 20) % 60); star4(c, fx, fy, 2.2, 'rgba(255,255,255,.9)'); } } });
+  DRAW.heartshima = shimaVariant({ front: (c, cx, by, r, a) => { heart(c, cx + 11, by + 3, 3.5, '#FF6B8A'); heart(c, cx - r - 16, by - 5, 5, '#FF6B8A'); heart(c, cx + 2, by - r - 8 + Math.sin(a.run * 4) * 2, 4, '#FF8AA3'); } });
+  DRAW.nemushima = shimaVariant({ front: (c, cx, by, r, a) => { c.fillStyle = '#4AA8E0'; c.beginPath(); c.moveTo(cx - 15, by - r + 4); c.quadraticCurveTo(cx - 8, by - r - 16, cx + 16, by - r - 14); c.lineTo(cx + 15, by - r + 4); c.closePath(); c.fill(); E(c, cx + 16, by - r - 14, 4, 4, 0, '#FFFFFF'); c.fillStyle = '#FFFFFF'; c.fillRect(cx - 17, by - r + 3, 34, 5); E(c, cx + 8, by - 5, 3.2, 3.2, 0, '#FFFFFF'); c.strokeStyle = '#1E1E24'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx + 8, by - 6, 2.6, 0.2, Math.PI - 0.2); c.stroke(); const z = (a.run * 1.5) % 1; c.globalAlpha = 1 - z; outlined('z', cx + 18, by - r - 6 - z * 14, 10 + z * 4, '#FFFFFF'); c.globalAlpha = 1; } });
+  DRAW.futagoshima = (c, cx, cy, r, a) => { c.save(); c.translate(cx, cy + r); c.scale(0.78, 0.78); DRAW.shimaenaga(c, -14, -r, r, { ...a, run: a.run + 0.5 }); DRAW.shimaenaga(c, 16, -r, r, a); c.restore(); heart(c, cx + 1, cy - r - 8 + Math.sin(a.run * 4) * 2, 3.5, '#FF8AA3'); };
+  DRAW.nijishima = bigWrap(DRAW.shimaenaga, { behind: (c, by, r, a) => { ['#E94F5C', '#FF8A3D', '#FFC93C', '#6CC06A', '#4AA8E0', '#A77BD8'].forEach((col, i) => { const f = flapOf(a); E(c, -r - 14 - i * 3, by + 2 + i * 2, 16 - i * 1.5, 5, -0.3 + f * 0.5, col); }); }, front: (c, by, r, a) => { for (let i = 0; i < 4; i++) star4(c, -26 + i * 17, by - 24 + Math.sin(a.run * 4 + i) * 5, 3, '#FFFFFF'); } });
   DRAW.ousama = bigWrap(DRAW.piyo, { front: (c, by, r) => crown(c, 1, by - r - 1) });
   DRAW.nijikumo = bigWrap(DRAW.kumo, {
     behind: (c, by) => {
@@ -1303,7 +1327,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     getDrawer(id)(c, cx, cy, r, a);
     if (hat === 'none' || !HATS.find(h => h.id === hat)) return;
     const ch = byId(id);
-    if (['kingshima', 'ousama', 'bigshima', 'yukidaruma', 'kingneko', 'ninja', 'angel', 'robot', 'niwatori', 'alpaca', 'flamingo', 'katatsumuri', 'hitode', 'dango'].includes(id)) return;
+    if (['kingshima', 'ousama', 'bigshima', 'yukidaruma', 'kingneko', 'ninja', 'angel', 'robot', 'niwatori', 'alpaca', 'flamingo', 'katatsumuri', 'hitode', 'dango', 'yukishima', 'nemushima', 'sakurashima'].includes(id)) return;
     if (isDrawId(id)) return;
     if (ch.id === id && ch.special) {
       c.save(); c.translate(cx, cy + r); c.scale(BIG, BIG);
@@ -2519,8 +2543,8 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     const rk = save.rank[rkey] = save.rank[rkey] || { dist: [], combo: [] };
     const entry = { v: 0, m, berries, combo: maxCombo, char: save.sel, hat: save.hat || 'none', adult: !!save.adult, at: Date.now() };
     const place = (list, v) => { list.push({ ...entry, v }); list.sort((a, b) => b.v - a.v); if (list.length > 3) list.length = 3; return list.findIndex(e => e.at === entry.at && e.v === v); };
-    const rankDist = place(rk.dist, m) ;
-    const rankCombo = maxCombo >= 2 ? place(rk.combo, maxCombo) : -1;
+    const rankDist = place(rk.dist, m);
+    const rankCombo = -1;
     if (mission.done) save.missions++;
     if (maxCombo > save.maxCombo) save.maxCombo = maxCombo;
     if (save.adult && m > save.adultBest) save.adultBest = m;
@@ -3674,6 +3698,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   }
   let rankWorld = 'w1', rankMode = 'n', rankFrom = startScreen;
   function renderRank() {
+    $('statLine').innerHTML = ['🍓 ' + save.total + 'こ', '🎮 ' + save.runs + 'かい', '✅ おだい ' + save.missions + 'かい', '🔥 コンボ ×' + save.maxCombo, '🛣️ ' + (save.totalDist | 0) + 'm', '🔥おとな ' + save.adultBest + 'm'].map(t => '<span>' + t + '</span>').join('');
     const row = $('rankWorlds'); row.innerHTML = '';
     for (const w of WORLDS) {
       if (!worldUnlocked(w)) continue;
@@ -3707,8 +3732,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
         drawPreview(pc, cid, false, null, e.hat || 'none');
       });
     };
-    fill($('rankDist'), rk.dist, e => e.v + ' m');
-    fill($('rankCombo'), rk.combo, e => '×' + e.v);
+    fill($('rankDist'), rk.dist, e => e.v + ' m <span class="sub">🍓' + (e.berries | 0) + '　🔥×' + (e.combo | 0) + '</span>');
   }
   function exportCode() {
     const data = { v: 1, save, drawings };
