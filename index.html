@@ -459,6 +459,8 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     { id: 'nemushima', name: 'ねむねむシマエナガ', need: { runs: 20 } },
     { id: 'futagoshima', name: 'ふたごシマエナガ', need: { combo: 22 } },
     { id: 'nijishima', name: 'にじシマエナガ', need: { berries: 8000 }, special: true },
+    { id: 'kiwishima', name: 'キウイシマエナガ', need: { berries: 2300 } },
+    { id: 'ringoshima', name: 'リンゴシマエナガ', need: { runs: 28 } },
   ].sort((x, y) => {
     const k = c => !c.need ? 0 : (c.special ? 100000 : 0) + (c.need.berries ? c.need.berries * 3 : c.need.meters ? c.need.meters : c.need.runs ? c.need.runs * 200 : c.need.missions ? c.need.missions * 250 : c.need.combo ? c.need.combo * 250 : c.need.adult ? c.need.adult * 2 : c.need.dist ? c.need.dist / 4 : 9000);
     return k(x) - k(y);
@@ -564,9 +566,9 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
       E(c, cx - 8, by - 5, 9, 5, -0.3, '#E8CCC3');
       const f = flapOf(a);
       E(c, cx - 9, by + 3, 11, 7, -0.25 + f, '#2F2F38');
-      E(c, cx - 8, by + 5, 7, 2.5, -0.25 + f, '#C9CFD8');
-      E(c, cx + 8, by - 5, 2.6, 2.6, 0, '#1E1E24');
-      E(c, cx + 8.8, by - 5.8, 0.8, 0.8, 0, '#fff');
+      E(c, cx - 8, by + 5, 7, 2.5, -0.25 + f, a.wing || '#C9CFD8');
+      if (a.closedEye) { c.strokeStyle = '#1E1E24'; c.lineWidth = 1.8; c.lineCap = 'round'; c.beginPath(); c.arc(cx + 8, by - 6, 3, 0.15, Math.PI - 0.15); c.stroke(); }
+      else { E(c, cx + 8, by - 5, 2.6, 2.6, 0, '#1E1E24'); E(c, cx + 8.8, by - 5.8, 0.8, 0.8, 0, '#fff'); }
       c.fillStyle = '#1E1E24'; tri(c, cx + r - 2, by - 3, cx + r + 4, by - 1, cx + r - 2, by + 1);
       E(c, cx + 11, by + 3, 3.4, 2, 0, '#FFD0D6');
     },
@@ -832,6 +834,19 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   DRAW.heartshima = shimaVariant({ front: (c, cx, by, r, a) => { heart(c, cx + 11, by + 3, 3.5, '#FF6B8A'); heart(c, cx - r - 16, by - 5, 5, '#FF6B8A'); heart(c, cx + 2, by - r - 8 + Math.sin(a.run * 4) * 2, 4, '#FF8AA3'); } });
   DRAW.nemushima = shimaVariant({ front: (c, cx, by, r, a) => { c.fillStyle = '#4AA8E0'; c.beginPath(); c.moveTo(cx - 15, by - r + 4); c.quadraticCurveTo(cx - 8, by - r - 16, cx + 16, by - r - 14); c.lineTo(cx + 15, by - r + 4); c.closePath(); c.fill(); E(c, cx + 16, by - r - 14, 4, 4, 0, '#FFFFFF'); c.fillStyle = '#FFFFFF'; c.fillRect(cx - 17, by - r + 3, 34, 5); E(c, cx + 8, by - 5, 3.2, 3.2, 0, '#FFFFFF'); c.strokeStyle = '#1E1E24'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx + 8, by - 6, 2.6, 0.2, Math.PI - 0.2); c.stroke(); const z = (a.run * 1.5) % 1; c.globalAlpha = 1 - z; outlined('z', cx + 18, by - r - 6 - z * 14, 10 + z * 4, '#FFFFFF'); c.globalAlpha = 1; } });
   DRAW.futagoshima = (c, cx, cy, r, a) => { c.save(); c.translate(cx, cy + r); c.scale(0.78, 0.78); DRAW.shimaenaga(c, -14, -r, r, { ...a, run: a.run + 0.5 }); DRAW.shimaenaga(c, 16, -r, r, a); c.restore(); heart(c, cx + 1, cy - r - 8 + Math.sin(a.run * 4) * 2, 3.5, '#FF8AA3'); };
+  DRAW.kiwishima = (c, cx, cy, r, a) => {
+    DRAW.shimaenaga(c, cx, cy, r, { ...a, wing: '#8BC34A', closedEye: true });
+    const by = cy - bobOf(a), kx = cx + 1, ky = by - r - 3;
+    E(c, kx, ky, 9, 9, 0, '#8B6B3E'); E(c, kx, ky, 7.5, 7.5, 0, '#8BC34A'); E(c, kx, ky, 3, 3, 0, '#E8F5C8');
+    for (let k = 0; k < 8; k++) E(c, kx + Math.cos(k * 0.785) * 4.6, ky + Math.sin(k * 0.785) * 4.6, 0.9, 0.9, 0, '#2B2B33');
+  };
+  DRAW.ringoshima = (c, cx, cy, r, a) => {
+    DRAW.shimaenaga(c, cx, cy, r, { ...a, wing: '#E94F5C' });
+    const by = cy - bobOf(a), ax = cx + 1, ay = by - r - 6;
+    E(c, ax, ay, 8.5, 8, 0, '#E94F5C'); E(c, ax - 3, ay - 3, 3, 2, -0.5, '#FF9EAA');
+    c.strokeStyle = '#5B3A1E'; c.lineWidth = 2; c.beginPath(); c.moveTo(ax, ay - 7); c.lineTo(ax + 2, ay - 12); c.stroke();
+    E(c, ax + 5, ay - 10, 4, 2, -0.5, '#6CC06A');
+  };
   DRAW.nijishima = bigWrap(DRAW.shimaenaga, { behind: (c, by, r, a) => { ['#E94F5C', '#FF8A3D', '#FFC93C', '#6CC06A', '#4AA8E0', '#A77BD8'].forEach((col, i) => { const f = flapOf(a); E(c, -r - 14 - i * 3, by + 2 + i * 2, 16 - i * 1.5, 5, -0.3 + f * 0.5, col); }); }, front: (c, by, r, a) => { for (let i = 0; i < 4; i++) star4(c, -26 + i * 17, by - 24 + Math.sin(a.run * 4 + i) * 5, 3, '#FFFFFF'); } });
   DRAW.ousama = bigWrap(DRAW.piyo, { front: (c, by, r) => crown(c, 1, by - r - 1) });
   DRAW.nijikumo = bigWrap(DRAW.kumo, {
@@ -1327,7 +1342,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     getDrawer(id)(c, cx, cy, r, a);
     if (hat === 'none' || !HATS.find(h => h.id === hat)) return;
     const ch = byId(id);
-    if (['kingshima', 'ousama', 'bigshima', 'yukidaruma', 'kingneko', 'ninja', 'angel', 'robot', 'niwatori', 'alpaca', 'flamingo', 'katatsumuri', 'hitode', 'dango', 'yukishima', 'nemushima', 'sakurashima'].includes(id)) return;
+    if (['kingshima', 'ousama', 'bigshima', 'yukidaruma', 'kingneko', 'ninja', 'angel', 'robot', 'niwatori', 'alpaca', 'flamingo', 'katatsumuri', 'hitode', 'dango', 'yukishima', 'nemushima', 'sakurashima', 'kiwishima', 'ringoshima'].includes(id)) return;
     if (isDrawId(id)) return;
     if (ch.id === id && ch.special) {
       c.save(); c.translate(cx, cy + r); c.scale(BIG, BIG);
