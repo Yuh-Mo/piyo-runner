@@ -48,7 +48,35 @@ body{
 .pill{background:rgba(255,255,255,.88);border-radius:999px;padding:5px 14px;display:flex;gap:6px;align-items:center;white-space:nowrap}
 .pill.mini{font-size:clamp(13px,3.4vw,16px);padding:4px 12px}
 .pill.mini.done{background:#FFE9A8}
-#sound,#fsBtn,#pauseBtn{pointer-events:auto;border:0;font:inherit;cursor:pointer;color:inherit}
+#pauseBtn{pointer-events:auto;border:0;font:inherit;cursor:pointer;color:inherit}
+/* ---- title screen ---- */
+.overlay.title{flex-direction:column;justify-content:space-between;align-items:stretch;gap:6px;background:linear-gradient(180deg,rgba(43,58,85,0) 0%,rgba(43,58,85,0) 55%,rgba(43,58,85,.25) 100%);padding:max(10px,env(safe-area-inset-top,0px)) 12px max(10px,env(safe-area-inset-bottom,0px))}
+.quick{position:absolute;top:max(10px,env(safe-area-inset-top,0px));right:10px;display:flex;gap:8px;z-index:2}
+.icon{font:inherit;border:0;cursor:pointer;background:rgba(255,255,255,.92);color:#2B3A55;border-radius:16px;min-width:56px;padding:5px 8px 4px;display:flex;flex-direction:column;align-items:center;gap:0;font-size:22px;line-height:1.1;box-shadow:0 3px 0 rgba(43,58,85,.25)}
+.icon span{font-size:10px;font-weight:800;opacity:.75;white-space:nowrap}
+.icon[hidden]{display:none}
+.icon:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(43,58,85,.25)}
+.quickrow{margin-top:8px}
+.card .icon{background:var(--chip);color:var(--ink);box-shadow:none;min-width:64px}
+.logo{text-align:center;margin-top:58px;flex:none}
+.logo-t{font-size:clamp(40px,12.5vw,62px);font-weight:800;line-height:1;color:#FFF3C4;letter-spacing:.02em;
+  -webkit-text-stroke:2px #2B3A55;paint-order:stroke fill;transform:rotate(-3deg);display:inline-block;
+  text-shadow:0 5px 0 #E05A1D,0 7px 0 rgba(43,58,85,.6);}
+.logo-s{margin:12px 0 0;font-size:clamp(13px,3.6vw,15px);font-weight:800;color:#fff;text-shadow:0 2px 0 rgba(43,58,85,.6),0 0 6px rgba(43,58,85,.4)}
+.hstage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0}
+.hstage .hero{filter:drop-shadow(0 8px 0 rgba(43,58,85,.22));animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.nametag{font:inherit;border:0;cursor:pointer;background:rgba(255,255,255,.95);color:#2B3A55;border-radius:999px;padding:5px 14px 5px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 0 rgba(43,58,85,.25)}
+.nametag b{font-size:clamp(17px,4.8vw,21px);font-weight:800}
+.nametag span{font-size:12px;font-weight:800;color:var(--accent);background:#FFF1E3;border-radius:999px;padding:3px 9px}
+.panel{background:var(--card);color:var(--ink);border-radius:24px;padding:10px 12px 12px;text-align:center;max-width:440px;width:100%;margin:0 auto;box-shadow:0 6px 0 rgba(43,58,85,.3);flex:none;max-height:62%;overflow-y:auto}
+.panel > * + *{margin-top:6px}
+.panel .mission{margin:6px 0 0}
+.panel button.go{margin-top:10px;width:min(100%,300px);padding:11px 20px}
+.panel .row{margin-top:8px}
+.panel .sub{padding:5px 16px;min-height:38px;font-size:clamp(14px,4vw,17px)}
+@media (max-height:640px){.logo{margin-top:50px}.logo-t{font-size:clamp(32px,10vw,46px)}.logo-s{display:none}.hstage .hero{transform:scale(.8)}.panel .progwrap{display:none}}
+
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(43,58,85,.28)}
 .overlay[hidden]{display:none}
 .card{
@@ -247,31 +275,36 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
           <button class="sub" id="restartBtn">はじめから</button>
           <button class="sub" id="quitBtn">トップへ</button>
         </div>
+        <div class="row quickrow">
+          <button class="icon volBtn" aria-label="おんりょう">🔊<span>おおきい</span></button>
+          <button class="icon fsBtn" aria-label="ぜんがめん きりかえ" hidden>⛶<span>ぜんがめん</span></button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="hud" style="justify-content:flex-end;top:auto;bottom:10px;align-items:center">
-    <button class="pill" id="fsBtn" aria-label="ぜんがめん きりかえ" hidden>ぜんがめん</button>
-    <button class="pill" id="sound" aria-label="おと オン・オフ">🔊</button>
-  </div>
-
-  <div class="overlay" id="startScreen">
-    <div class="card">
-      <canvas class="hero" id="heroCv" data-size="104"></canvas>
-      <h1>ぴよランナー</h1>
-      <p><b id="heroName">ぴよ</b> と はしろう！</p>
+  <div class="overlay title" id="startScreen">
+    <div class="quick">
+      <button class="icon volBtn" aria-label="おんりょう">🔊<span>おおきい</span></button>
+      <button class="icon fsBtn" aria-label="ぜんがめん きりかえ" hidden>⛶<span>ぜんがめん</span></button>
+    </div>
+    <div class="logo">
+      <div class="logo-t">ぴよランナー</div>
+      <p class="logo-s">タップで ジャンプ！ 🍓 を あつめよう</p>
+    </div>
+    <div class="hstage">
+      <canvas class="hero" id="heroCv" data-size="132"></canvas>
+      <button class="nametag" id="pickBtn1" aria-label="なかまを えらぶ"><b id="heroName">ぴよ</b><span>👒 きがえる</span></button>
+    </div>
+    <div class="panel">
       <div class="tools" id="worldRow"></div>
       <div class="tools" id="dbgRow" hidden></div>
-      <p class="soft" id="worldCond" style="font-size:13px;min-height:1.2em;margin:2px 0 0"></p>
+      <p class="soft" id="worldCond" style="font-size:12px;min-height:1.2em;margin:2px 0 0"></p>
       <div class="mission" id="missionBox"></div>
       <div class="progwrap" id="progStart"></div>
-      <div class="btns">
-        <button class="go" id="startBtn">はじめる</button>
-        <div class="row">
-          <button class="sub" id="pickBtn1">👒 なかま</button>
-          <button class="sub" id="rankBtn">🏆 きろく</button>
-          <button class="sub" id="adultBtn">おとな：オフ</button>
-        </div>
+      <button class="go" id="startBtn">はじめる</button>
+      <div class="row">
+        <button class="sub" id="rankBtn">🏆 きろく</button>
+        <button class="sub" id="adultBtn">おとな：オフ</button>
       </div>
     </div>
   </div>
@@ -1494,11 +1527,27 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   const nameOf = id => isDrawId(id) ? 'おえかき ' + (+id.slice(4) + 1) + 'ごう' : byId(id).name;
 
   // ---------- sound ----------
-  let ac = null, soundOn = true;
+  const VOLS = [[1, '🔊', 'おおきい'], [0.4, '🔉', 'ちいさい'], [0, '🔇', 'なし']];
+  let ac = null, soundOn = true, master = null;
+  function volIdx() { return Math.min(VOLS.length - 1, Math.max(0, save.vol | 0)); }
+  function ensureAc() {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    if (!master) { master = ac.createGain(); master.gain.value = VOLS[volIdx()][0]; master.connect(ac.destination); }
+    return ac;
+  }
+  function applyVol() {
+    const [g, ic, lb] = VOLS[volIdx()];
+    soundOn = g > 0;
+    if (master) master.gain.value = g;
+    document.querySelectorAll('.volBtn').forEach(b => { b.innerHTML = ic + '<span>' + lb + '</span>'; });
+    if (!soundOn) { stopBgm(); bgm.song = null; } else refreshBgm();
+  }
+  function cycleVol() { save.vol = (volIdx() + 1) % VOLS.length; persist(); applyVol(); if (soundOn) tone(660, 0.08, 'square', 0.05); }
+  document.querySelectorAll('.volBtn').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); cycleVol(); }));
   function tone(f, d, type = 'square', vol = 0.07, slide = 0, delay = 0) {
     if (!soundOn) return;
     try {
-      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      ensureAc();
       const t0 = ac.currentTime + delay;
       const o = ac.createOscillator(), g = ac.createGain();
       o.type = type;
@@ -1506,7 +1555,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
       if (slide) o.frequency.linearRampToValueAtTime(f + slide, t0 + d);
       g.gain.setValueAtTime(vol, t0);
       g.gain.exponentialRampToValueAtTime(0.001, t0 + d);
-      o.connect(g); g.connect(ac.destination);
+      o.connect(g); g.connect(master);
       o.start(t0); o.stop(t0 + d + 0.02);
     } catch (e) {}
   }
@@ -1556,9 +1605,9 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   function playBgm(name) {
     if (!soundOn) { bgm.song = name; return; }
     try {
-      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      ensureAc();
       if (ac.state === 'suspended') ac.resume();
-      if (!bgm.gain) { bgm.gain = ac.createGain(); bgm.gain.gain.value = 1; bgm.gain.connect(ac.destination); }
+      if (!bgm.gain) { bgm.gain = ac.createGain(); bgm.gain.gain.value = 1; bgm.gain.connect(master); }
       if (bgm.song === name && bgm.timer) return;
       stopBgm();
       bgm.song = name; bgm.mi = 0; bgm.bi = 0; bgm.pi = 0; bgm.mAt = ac.currentTime + 0.1; bgm.bAt = ac.currentTime + 0.1; bgm.pAt = ac.currentTime + 0.1;
@@ -1571,12 +1620,6 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   function refreshBgm() { const want = bgmFor(); if (!soundOn) { stopBgm(); bgm.song = want; return; } if (state === 'pause') { stopBgm(); bgm.song = null; return; } playBgm(want); }
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopBgm(); else setTimeout(refreshBgm, 200); });
   const jingle = (notes, step = 0.1, d = 0.16, vol = 0.05) => notes.forEach((f, i) => tone(f, d, 'square', vol, 0, i * step));
-  $('sound').addEventListener('click', e => {
-    e.stopPropagation();
-    soundOn = !soundOn;
-    $('sound').textContent = soundOn ? '🔊' : '🔇';
-    if (!soundOn) { stopBgm(); bgm.song = null; } else refreshBgm();
-  });
 
   // ---------- previews ----------
   function drawPreview(canvas, id, locked, anim, hatId) {
@@ -3671,10 +3714,9 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     if (ex && fsEl()) { try { const r = ex.call(document); if (r && r.catch) r.catch(() => {}); } catch (e) {} }
   }
   if (fsReq) {
-    const fsBtn = $('fsBtn');
-    fsBtn.hidden = false;
-    fsBtn.addEventListener('click', e => { e.stopPropagation(); fsEl() ? exitFull() : goFull(); });
-    const sync = () => { fsBtn.textContent = fsEl() ? 'もどす' : 'ぜんがめん'; setTimeout(resize, 50); };
+    const fsBtns = document.querySelectorAll('.fsBtn');
+    fsBtns.forEach(b => { b.hidden = false; b.addEventListener('click', e => { e.stopPropagation(); fsEl() ? exitFull() : goFull(); }); });
+    const sync = () => { fsBtns.forEach(b => { b.innerHTML = fsEl() ? '⤢<span>もどす</span>' : '⛶<span>ぜんがめん</span>'; }); setTimeout(resize, 50); };
     document.addEventListener('fullscreenchange', sync);
     document.addEventListener('webkitfullscreenchange', sync);
   }
@@ -3841,7 +3883,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
       row.appendChild(b);
     });
   }
-  document.querySelector('#startScreen h1').addEventListener('click', () => {
+  document.querySelector('#startScreen .logo-t').addEventListener('click', () => {
     const now = Date.now();
     if (now - titleTapT > 1500) titleTaps = 0;
     titleTapT = now; titleTaps++;
@@ -4223,6 +4265,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   }
   newMission();
   updatePalette(0);
+  applyVol();
   refreshStart();
 })();
 </script>
