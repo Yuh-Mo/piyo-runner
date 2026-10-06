@@ -1494,8 +1494,9 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   }
   const save = loadSave();
   function persist() { try { localStorage.setItem('piyo-save', JSON.stringify(save)); } catch (e) {} }
+  const debugOn = () => KM !== 1000;
   function isUnlocked(ch) {
-    if (!ch.need) return true;
+    if (!ch.need || debugOn()) return true; // debug mode: every character can be tried
     const n = ch.need;
     if (n.berries) return save.total >= n.berries;
     if (n.meters) return save.best >= n.meters;
@@ -3885,13 +3886,18 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   }
   document.querySelector('#startScreen .logo-t').addEventListener('click', () => {
     const now = Date.now();
-    if (now - titleTapT > 1500) titleTaps = 0;
+    if (now - titleTapT > 2000) titleTaps = 0;
     titleTapT = now; titleTaps++;
-    if (titleTaps >= 5) {
+    if (titleTaps >= 10) {
       titleTaps = 0;
       KM = KM === 1000 ? 500 : 1000;
       debugStage = 0;
-      $('heroName').textContent = KM === 500 ? '🛠 デバッグ：500mで きりかえ' : nameOf(save.sel);
+      if (KM === 1000) { // leaving debug: drop anything that isn't really unlocked
+        if (!validSel(save.sel)) save.sel = 'piyo';
+        const h = HATS.find(x => x.id === save.hat); if (h && !h.ok(save)) save.hat = 'none';
+        persist(); refreshHero();
+      }
+      $('heroName').textContent = KM === 500 ? '🛠 デバッグ：500m・ぜんキャラOK' : nameOf(save.sel);
       renderDbg();
       tone(KM === 500 ? 880 : 440, 0.1, 'square', 0.05);
     }
@@ -4013,14 +4019,14 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
           if (x.empty) { openEditor(x.slot); return; }
           if (!locked) {
             save.sel = x.id;
-            if (!save.seenC.includes(x.id)) save.seenC.push(x.id);
+            if (!save.seenC.includes(x.id) && !debugOn()) save.seenC.push(x.id);
             persist(); refreshStart();
             tone(660, 0.06, 'square', 0.04); tone(990, 0.08, 'square', 0.04, 0, 0.06);
           } else tone(300, 0.08, 'triangle', 0.04);
           renderSel();
         });
       } else {
-        const ok = x.ok(save);
+        const ok = x.ok(save) || debugOn();
         d.classList.toggle('sel', x.id === save.hat);
         d.classList.toggle('locked', !ok);
         d.setAttribute('aria-label', ok ? x.name : 'まだ ひみつの ぼうし');
@@ -4030,7 +4036,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
         d.addEventListener('click', () => {
           if (ok) {
             save.hat = x.id;
-            if (!save.seenH.includes(x.id)) save.seenH.push(x.id);
+            if (!save.seenH.includes(x.id) && !debugOn()) save.seenH.push(x.id);
             persist(); refreshStart();
             tone(700, 0.06, 'square', 0.04);
             renderSel();
