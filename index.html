@@ -119,7 +119,20 @@ button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
 .progwrap{margin-top:6px}
 .progwrap{margin-top:4px}
 .progwrap .t{font-size:12px;opacity:.7;font-weight:800;margin:0}
-.selcard{padding:14px 12px 16px}
+.selcard{padding:12px 12px 12px;display:flex;flex-direction:column;height:100%;max-height:100%;overflow:hidden}
+.selcard > * + *{margin-top:6px}
+.selcard .tabs{margin:8px 0 4px}
+.tab .cnt{font-size:12px;opacity:.7;margin-left:2px}
+.filters{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.filters{gap:5px}
+.filters .tool{min-height:30px;padding:3px 8px;font-size:12.5px;border-width:2px}
+.grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;align-content:start;padding:4px 2px 8px;touch-action:pan-y;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.grid .tile{aspect-ratio:auto;min-height:56px}
+.grid .tile canvas{width:100%!important;height:auto!important;max-height:none}
+.grid .empty{grid-column:1/-1;text-align:center;opacity:.6;font-weight:800;padding:24px 0}
+.selbtns{margin-top:6px}
+.selbtns button.go{padding:8px 34px;font-size:clamp(18px,5vw,22px);min-height:44px}
+@media (min-width:460px){.grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
 .prev{display:flex;align-items:center;gap:10px;background:var(--chip);border-radius:24px;padding:6px 10px}
 .prev canvas{flex:none}
 .prevtxt{flex:1;min-width:0;text-align:left}
@@ -133,7 +146,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;touch-action:pan-y}
 .pager .arrow{width:46px;height:46px;font-size:30px}
 .pager .dots{margin:0}
-.tile{position:relative;min-width:0;background:var(--chip);border:3px solid transparent;border-radius:16px;padding:3px;cursor:pointer;aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tile{position:relative;min-width:0;background:var(--chip);border:3px solid transparent;border-radius:14px;padding:2px;cursor:pointer;aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tile canvas{width:100%!important;height:auto!important;max-height:100%}
 .tile.sel{border-color:var(--accent)}
 .tile.locked{opacity:.6}
@@ -351,16 +364,12 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
         </div>
       </div>
       <div class="tabs">
-        <button class="tab on" data-tab="chars">なかま</button>
-        <button class="tab" data-tab="hats">ぼうし</button>
+        <button class="tab on" data-tab="chars">なかま <span class="cnt" id="cntChars"></span></button>
+        <button class="tab" data-tab="hats">ぼうし <span class="cnt" id="cntHats"></span></button>
       </div>
-      <div class="tiles" id="tiles"></div>
-      <div class="pager">
-        <button class="arrow" id="prevBtn" aria-label="まえのページ">‹</button>
-        <div class="dots" id="dots"></div>
-        <button class="arrow" id="nextBtn" aria-label="つぎのページ">›</button>
-      </div>
-      <div class="btns"><button class="go" id="backBtn">もどる</button></div>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="tiles"></div>
+      <div class="btns selbtns"><button class="go" id="backBtn">もどる</button></div>
     </div>
   </div>
 
@@ -500,6 +509,23 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     { id: 'kiwishima', name: 'キウイシマエナガ', need: { berries: 2300 } },
     { id: 'ringoshima', name: 'リンゴシマエナガ', need: { runs: 28 } },
     { id: 'aoribbonshima', name: 'あおリボンシマエナガ', need: { missions: 20 } },
+    { id: 'hato', name: 'はと', need: { meters: 1300 } },
+    { id: 'donut', name: 'ドーナツ', need: { berries: 1600 } },
+    { id: 'melonpan', name: 'メロンパン', need: { berries: 2000 } },
+    { id: 'kangaroo', name: 'カンガルー', need: { berries: 2400 } },
+    { id: 'kujira', name: 'くじら', need: { berries: 2800 } },
+    { id: 'shimauma', name: 'しまうま', need: { meters: 3300 } },
+    { id: 'fennec', name: 'フェネック', need: { berries: 3700 } },
+    { id: 'unicorn', name: 'ユニコーン', need: { berries: 5500 } },
+    { id: 'kawauso', name: 'カワウソ', need: { runs: 32 } },
+    { id: 'mogura', name: 'もぐら', need: { runs: 40 } },
+    { id: 'osushi', name: 'おすし', need: { runs: 50 } },
+    { id: 'araiguma', name: 'アライグマ', need: { missions: 25 } },
+    { id: 'kabuto', name: 'カブトムシ', need: { missions: 35 } },
+    { id: 'harisenbon', name: 'ハリセンボン', need: { combo: 12 } },
+    { id: 'baku', name: 'バク', need: { dist: 20000 } },
+    { id: 'same', name: 'サメ', need: { adult: 1000 } },
+    { id: 'kosai', name: 'こどもサイ', need: { meters: 2400 } },
   ].sort((x, y) => {
     const k = c => !c.need ? 0 : (c.special ? 100000 : 0) + (c.need.berries ? c.need.berries * 3 : c.need.meters ? c.need.meters : c.need.runs ? c.need.runs * 200 : c.need.missions ? c.need.missions * 250 : c.need.combo ? c.need.combo * 250 : c.need.adult ? c.need.adult * 2 : c.need.dist ? c.need.dist / 4 : 9000);
     return k(x) - k(y);
@@ -1056,6 +1082,23 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     ice: simple({ body: '#F7C6D9', rx: 20, ry: 18, dy: -6, hop: true, back: [{ k: 'T', p: [-16, 8, 0, 36, 16, 8], col: '#E8B36A' }, { k: 'L', p: [-10, 14, 6, 26], w: 1.5, col: '#C98B4B' }, { k: 'L', p: [10, 14, -6, 26], w: 1.5, col: '#C98B4B' }], front: [{ k: 'E', x: -8, y: -12, rx: 7, ry: 5, rot: -0.3, col: '#FFFFFF' }, { k: 'E', x: 6, y: -18, rx: 5, ry: 5, col: '#E94F5C' }], eyes: 2, cx: 0, cy: 6 }),
     sai: simple({ body: '#8E99A6', belly: '#B7BFC9', legs: '#5B6573', legW: 5, rx: 24, ry: 20, back: [{ k: 'E', x: -10, y: -20, rx: 5, ry: 6, col: '#8E99A6' }, { k: 'E', x: 10, y: -20, rx: 5, ry: 6, col: '#8E99A6' }], front: [{ k: 'E', x: 18, y: 4, rx: 11, ry: 8, col: '#8E99A6' }, { k: 'T', p: [24, -4, 30, -20, 32, -2], col: '#F2E4C8' }, { k: 'E', x: 27, y: 6, rx: 2.4, ry: 2, col: '#2B3A55' }], ex: 8, ey: -6 }),
     kaba: simple({ body: '#A77BD8', belly: '#D9C6F5', legs: '#7B5CC7', legW: 6, rx: 24, ry: 20, back: [{ k: 'E', x: -12, y: -18, rx: 5, ry: 5, col: '#A77BD8' }, { k: 'E', x: 12, y: -18, rx: 5, ry: 5, col: '#A77BD8' }], front: [{ k: 'E', x: 18, y: 6, rx: 13, ry: 10, col: '#B58EE6' }, { k: 'E', x: 22, y: 2, rx: 2.4, ry: 2, col: '#2B3A55' }, { k: 'E', x: 28, y: 2, rx: 2.4, ry: 2, col: '#2B3A55' }, { k: 'R', x: 16, y: 10, w: 3, h: 4, col: '#FFFFFF' }, { k: 'R', x: 26, y: 10, w: 3, h: 4, col: '#FFFFFF' }], ex: 8, ey: -8, es: 2.8 }),
+    hato: simple({ body: '#AEB8C8', belly: '#DDE3EC', legs: '#E07A8A', legW: 3, front: [...BEAK('#F2B233'), { k: 'E', x: -8, y: 2, rx: 11, ry: 6, rot: -0.3, col: '#8F9BB0' }, { k: 'E', x: 10, y: 6, rx: 6, ry: 4, col: '#6CC06A' }, { k: 'E', x: 12, y: 7, rx: 4, ry: 2.5, col: '#A77BD8' }], back: [{ k: 'T', p: [-18, -2, -34, -8, -30, 6], col: '#8F9BB0' }], ex: 10, ey: -6, es: 2.8 }),
+    donut: simple({ hop: true, dy: 2, body: '#E8B36A', rx: 24, ry: 20, front: [{ k: 'E', x: 0, y: -4, rx: 22, ry: 15, col: '#F7A8C4' }, { k: 'E', x: 0, y: -1, rx: 6, ry: 5, col: '#C98B4B' }, { k: 'R', x: -14, y: -12, w: 4, h: 1.8, col: '#FFFFFF' }, { k: 'R', x: 8, y: -14, w: 4, h: 1.8, col: '#FFE38A' }, { k: 'R', x: -4, y: -16, w: 4, h: 1.8, col: '#8FD1F5' }, { k: 'R', x: 14, y: -6, w: 4, h: 1.8, col: '#6CC06A' }, { k: 'R', x: -16, y: -2, w: 4, h: 1.8, col: '#FFE38A' }], eyes: 2, ex: 0, cx: 0, cy: 9, cheekCol: '#FF9EAA' }),
+    melonpan: simple({ hop: true, dy: 2, body: '#F2C98A', rx: 24, ry: 20, outline: '#D9A95C', front: [{ k: 'L', p: [-16, -14, 16, 6], w: 2, col: '#D9A95C' }, { k: 'L', p: [-18, 0, 10, 16], w: 2, col: '#D9A95C' }, { k: 'L', p: [-6, -19, 20, -2], w: 2, col: '#D9A95C' }, { k: 'L', p: [-10, -18, -22, -4], w: 2, col: '#D9A95C' }, { k: 'L', p: [6, -19, -16, 10], w: 2, col: '#D9A95C' }, { k: 'L', p: [20, -8, 0, 16], w: 2, col: '#D9A95C' }], eyes: 2, cx: 0, cy: 8 }),
+    kangaroo: simple({ body: '#D9955A', belly: '#F2D7B8', legs: '#A66A3E', legW: 5, by: 9, back: [{ k: 'L', p: [-16, 10, -30, 14, -40, 6], w: 7, col: '#D9955A' }, { k: 'E', x: -10, y: -22, rx: 4, ry: 9, rot: -0.3, col: '#D9955A' }, { k: 'E', x: 6, y: -23, rx: 4, ry: 9, rot: 0.2, col: '#D9955A' }, { k: 'E', x: 6, y: -22, rx: 2, ry: 6, rot: 0.2, col: '#F4B6C2' }], front: [{ k: 'A', x: 2, y: 10, r: 11, a0: 0, a1: Math.PI, w: 2.5, col: '#C9834A' }, { k: 'E', x: 4, y: 8, rx: 6, ry: 6, col: '#F2C98A' }, { k: 'eye', x: 6, y: 6, s: 2 }, { k: 'E', x: 17, y: 2, rx: 8, ry: 6, col: '#F2D7B8' }, { k: 'E', x: 22, y: -1, rx: 3, ry: 2.4, col: '#2B3A55' }], ex: 8, ey: -7 }),
+    kujira: simple({ float: true, dy: 2, body: '#5FA8E0', belly: '#DDEFFB', rx: 27, ry: 19, by: 9, back: [{ k: 'T', p: [-22, 0, -40, -14, -36, 4], col: '#5FA8E0' }, { k: 'T', p: [-22, 0, -40, 14, -36, 4], col: '#5FA8E0' }], front: [{ k: 'L', p: [8, 9, 22, 7], w: 1.6, col: '#2B6FC0' }], top: [{ k: 'L', p: [-2, -19, -2, -27], w: 3, col: '#BFE3FF' }, { k: 'E', x: -8, y: -30, rx: 4, ry: 3, col: '#BFE3FF' }, { k: 'E', x: 4, y: -30, rx: 4, ry: 3, col: '#BFE3FF' }, { k: 'E', x: -2, y: -34, rx: 3, ry: 3, col: '#BFE3FF' }], ex: 12, ey: -3, es: 2.8, cx: 16, cy: 4 }),
+    shimauma: simple({ body: '#F4F7FA', outline: '#C9D3DE', belly: '#FFFFFF', legs: '#3A3A44', back: [{ k: 'L', p: [-18, 6, -28, 10], w: 4, col: '#3A3A44' }, { k: 'E', x: -30, y: 12, rx: 4, ry: 5, col: '#3A3A44' }], front: [{ k: 'E', x: -12, y: -12, rx: 2.2, ry: 8, rot: 0.5, col: '#3A3A44' }, { k: 'E', x: -4, y: -16, rx: 2.2, ry: 7, rot: 0.2, col: '#3A3A44' }, { k: 'E', x: -16, y: 2, rx: 2, ry: 6, rot: 1.2, col: '#3A3A44' }, { k: 'E', x: -12, y: 12, rx: 2, ry: 6, rot: 1.0, col: '#3A3A44' }, { k: 'E', x: 18, y: 4, rx: 10, ry: 8, col: '#F4F7FA' }, { k: 'E', x: 24, y: 3, rx: 2.4, ry: 2, col: '#2B3A55' }, { k: 'E', x: 24, y: 8, rx: 2.4, ry: 2, col: '#2B3A55' }, { k: 'T', p: [-4, -20, 0, -31, 4, -20], col: '#F4F7FA' }, { k: 'T', p: [6, -19, 9, -29, 12, -18], col: '#F4F7FA' }], top: [{ k: 'L', p: [-14, -16, -8, -24, 0, -24, 6, -22], w: 5, col: '#3A3A44' }], ex: 8, ey: -6 }),
+    fennec: simple({ body: '#F5E3C3', belly: '#FFFBF2', legs: '#D9B98A', back: [{ k: 'T', p: [-16, -10, -16, -40, -2, -16], col: '#F5E3C3' }, { k: 'T', p: [2, -16, 12, -40, 18, -10], col: '#F5E3C3' }, { k: 'T', p: [-13, -14, -14, -34, -4, -17], col: '#F4B6C2' }, { k: 'T', p: [5, -17, 11, -34, 15, -13], col: '#F4B6C2' }, ...BUSHY_TAIL('#F5E3C3', '#8B5A34')], front: [{ k: 'E', x: 15, y: 4, rx: 9, ry: 6, col: '#FFFBF2' }, { k: 'E', x: 21, y: 1, rx: 3, ry: 2.4, col: '#2B3A55' }], ex: 8, ey: -6 }),
+    unicorn: simple({ body: '#FFFFFF', outline: '#E3DCF5', belly: '#FBF4FF', legs: '#C9B6E8', back: [{ k: 'L', p: [-18, 8, -30, 4, -34, 18], w: 5, col: '#F7A8C4' }, { k: 'L', p: [-20, 8, -32, 8, -36, 20], w: 3, col: '#8FD1F5' }], front: [{ k: 'E', x: 18, y: 4, rx: 9, ry: 7, col: '#FFFFFF' }, { k: 'E', x: 24, y: 2, rx: 2.2, ry: 1.8, col: '#C9B6E8' }, { k: 'T', p: [-4, -20, 0, -30, 4, -20], col: '#FFFFFF' }, { k: 'T', p: [6, -19, 9, -28, 12, -18], col: '#FFFFFF' }], top: [{ k: 'T', p: [-2, -22, 2, -44, 6, -22], col: '#FFE38A' }, { k: 'L', p: [-1, -28, 4, -30], w: 1.5, col: '#F2B233' }, { k: 'L', p: [0, -35, 4, -37], w: 1.5, col: '#F2B233' }, { k: 'L', p: [-14, -16, -8, -24, -2, -22], w: 5, col: '#F7A8C4' }, { k: 'L', p: [-16, -12, -10, -20, -4, -18], w: 5, col: '#A77BD8' }, { k: 'L', p: [-18, -8, -12, -16, -6, -14], w: 5, col: '#8FD1F5' }], ex: 8, ey: -6, cheekCol: '#FFC4CE' }),
+    kawauso: simple({ body: '#8B6B4E', belly: '#E8D4B8', legs: '#5B4636', legW: 3.5, back: [...ROUND_EARS('#8B6B4E', '#E8D4B8'), { k: 'L', p: [-18, 10, -32, 12, -38, 4], w: 6, col: '#8B6B4E' }], front: [{ k: 'E', x: 15, y: 3, rx: 9, ry: 6.5, col: '#E8D4B8' }, { k: 'E', x: 21, y: 0, rx: 3.2, ry: 2.6, col: '#2B3A55' }, { k: 'L', p: [21, 2, 21, 5], w: 1.5, col: '#5B4636' }, { k: 'E', x: 4, y: 12, rx: 6, ry: 4.5, col: '#C9B6E8' }, { k: 'L', p: [0, 10, 4, 9, 8, 10], w: 1.5, col: '#A77BD8' }], ex: 8, ey: -6 }),
+    mogura: simple({ body: '#5B5566', belly: '#8A8396', legs: '#F4B6C2', legW: 4, back: [], front: [{ k: 'E', x: 18, y: 5, rx: 8, ry: 6, col: '#6E6880' }, { k: 'E', x: 25, y: 4, rx: 3.6, ry: 3, col: '#FF8AA3' }, { k: 'E', x: 6, y: 14, rx: 6, ry: 4, col: '#F4B6C2' }, { k: 'E', x: -8, y: 15, rx: 6, ry: 4, col: '#F4B6C2' }, { k: 'L', p: [9, -4, 13, -4], w: 1.8, col: '#2B3A55' }], noFace: true, top: [{ k: 'E', x: 12, y: 7, rx: 3, ry: 1.8, col: '#FF9EAA' }] }),
+    osushi: simple({ hop: true, dy: 4, body: '#FFFFFF', outline: '#E3E9EF', rx: 25, ry: 17, front: [{ k: 'E', x: 0, y: -14, rx: 26, ry: 9, col: '#FF8A5C' }, { k: 'L', p: [-16, -14, -8, -16], w: 1.8, col: '#FFC9B0' }, { k: 'L', p: [-4, -15, 6, -17], w: 1.8, col: '#FFC9B0' }, { k: 'L', p: [10, -14, 18, -16], w: 1.8, col: '#FFC9B0' }, { k: 'R', x: -5, y: -24, w: 10, h: 30, col: '#2E4A2E' }, { k: 'E', x: -12, y: 4, rx: 2, ry: 2, col: '#E3E9EF' }, { k: 'E', x: 14, y: 8, rx: 2, ry: 2, col: '#E3E9EF' }], eyes: 2, cx: 0, cy: 8, cheekCol: '#FFB3BF' }),
+    araiguma: simple({ body: '#9AA0A8', belly: '#E3E9EF', legs: '#5B6573', back: [...ROUND_EARS('#9AA0A8', '#E3E9EF'), { k: 'L', p: [-18, 8, -30, 6, -36, -6], w: 7, col: '#9AA0A8' }, { k: 'L', p: [-26, 7, -28, 1], w: 7, col: '#3A3A44' }, { k: 'L', p: [-33, -2, -35, -6], w: 7, col: '#3A3A44' }], front: [{ k: 'E', x: 8, y: -5, rx: 9, ry: 5.5, rot: 0.15, col: '#3A3A44' }, { k: 'E', x: 17, y: 4, rx: 8, ry: 6, col: '#E3E9EF' }, { k: 'E', x: 23, y: 1, rx: 3, ry: 2.5, col: '#2B3A55' }], ex: 9, ey: -5 }),
+    kabuto: simple({ body: '#6E4A2A', belly: '#8B5A34', legs: '#3B2A1A', legW: 3, rx: 24, ry: 18, by: 10, outline: '#3B2A1A', back: [{ k: 'L', p: [-14, -12, -24, -24], w: 2.5, col: '#3B2A1A' }, { k: 'L', p: [-20, 0, -32, -6], w: 2.5, col: '#3B2A1A' }], front: [{ k: 'L', p: [-2, -17, -4, 16], w: 1.6, col: '#3B2A1A' }, { k: 'E', x: 17, y: 2, rx: 9, ry: 8, col: '#5B3A1E' }], top: [{ k: 'L', p: [20, -4, 30, -24], w: 4, col: '#3B2A1A' }, { k: 'L', p: [30, -24, 25, -32], w: 3, col: '#3B2A1A' }, { k: 'L', p: [30, -24, 36, -31], w: 3, col: '#3B2A1A' }, { k: 'L', p: [6, -16, 8, -26], w: 2.5, col: '#3B2A1A' }], ex: 12, ey: -2, es: 2.6, cheek: false }),
+    harisenbon: simple({ float: true, body: '#F7D774', belly: '#FFF6DC', rx: 22, ry: 21, back: Array.from({ length: 12 }, (_, i) => { const an = i / 12 * Math.PI * 2; return { k: 'L', p: [Math.cos(an) * 18, Math.sin(an) * 17, Math.cos(an) * 28, Math.sin(an) * 27], w: 3, col: '#D9A95C' }; }), front: [{ k: 'T', p: [-20, -4, -34, -14, -34, 6], col: '#F2B233' }, { k: 'E', x: 20, y: 4, rx: 5, ry: 3.5, col: '#E8A05A' }, { k: 'E', x: -6, y: -8, rx: 3, ry: 3, col: '#E8A05A' }, { k: 'E', x: 4, y: 12, rx: 3, ry: 3, col: '#E8A05A' }], ex: 10, ey: -5, es: 3.6, cx: 14, cy: 6 }),
+    baku: simple({ body: '#3A3A44', belly: '#F4F7FA', legs: '#2B2B33', legW: 5, rx: 24, ry: 19, bx: -2, by: 2, back: [{ k: 'E', x: -10, y: -18, rx: 5, ry: 6, col: '#3A3A44' }, { k: 'E', x: 10, y: -18, rx: 5, ry: 6, col: '#3A3A44' }, { k: 'E', x: -10, y: -18, rx: 2.5, ry: 3.5, col: '#F4F7FA' }, { k: 'E', x: 10, y: -18, rx: 2.5, ry: 3.5, col: '#F4F7FA' }], front: [{ k: 'E', x: 18, y: 4, rx: 10, ry: 8, col: '#3A3A44' }, { k: 'L', p: [24, 4, 32, 10], w: 7, col: '#3A3A44' }, { k: 'E', x: 32, y: 10, rx: 3.5, ry: 2.5, col: '#5B5566' }], ex: 8, ey: -6, cheekCol: '#C9B6E8' }),
+    same: simple({ float: true, dy: 1, body: '#7E8FA6', belly: '#E3E9EF', rx: 27, ry: 18, by: 9, back: [{ k: 'T', p: [-22, 0, -40, -16, -34, 2], col: '#7E8FA6' }, { k: 'T', p: [-22, 0, -38, 14, -34, 2], col: '#7E8FA6' }, { k: 'T', p: [-8, -14, 2, -34, 10, -14], col: '#7E8FA6' }], front: [{ k: 'T', p: [8, 12, 2, 24, 14, 12], col: '#7E8FA6' }, { k: 'L', p: [8, 8, 26, 4], w: 2.5, col: '#2B3A55' }, { k: 'T', p: [10, 8, 13, 12, 16, 7.5], col: '#FFFFFF' }, { k: 'T', p: [17, 7.5, 20, 11.5, 23, 6.5], col: '#FFFFFF' }, { k: 'L', p: [-20, 2, -16, 6], w: 1.5, col: '#5B6573' }, { k: 'L', p: [-14, 0, -10, 4], w: 1.5, col: '#5B6573' }], ex: 14, ey: -4, es: 2.8, cx: 18, cy: 1 }),
+    kosai: (c, cx, cy, r, a) => { c.save(); c.translate(cx, cy + r); c.scale(0.78, 0.78); DRAW.sai(c, 0, -r, r, a); c.restore(); E(c, cx + 14, cy - r * 0.78 - 20 + Math.sin(a.run * 4) * 2, 4, 4, 0, '#FFE38A'); },
     kuma2: simple({ body: '#FFFFFF', outline: '#DDE1E6', belly: '#F4F4F4', legs: '#2B2B33', back: [...TRI_EARS('#2B2B33', '#4A4A58'), ...LONG_TAIL('#2B2B33')], front: [{ k: 'E', x: 8, y: -6, rx: 5.5, ry: 6.5, rot: 0.3, col: '#2B2B33' }, { k: 'E', x: 9, y: -6, rx: 2.6, ry: 2.6, col: '#FFFFFF' }, { k: 'E', x: 9.5, y: -6, rx: 1.4, ry: 1.4, col: '#2B2B33' }, { k: 'E', x: 20, y: 2, rx: 3, ry: 2.4, col: '#E88A9A' }], noFace: true, top: [{ k: 'E', x: 14, y: 6, rx: 3.4, ry: 2, col: '#FFB3BF' }] }),
     penguin2: simple({ body: '#8E99A6', belly: '#FFFFFF', legs: '#F29A38', back: [], front: [{ k: 'E', x: 4, y: -6, rx: 9, ry: 8, col: '#3A3A44' }, { k: 'E', x: 6, y: -4, rx: 7, ry: 6, col: '#FFFFFF' }, { k: 'E', x: -12, y: 4, rx: 5, ry: 10, rot: 0.3, col: '#6E6E80' }, ...BEAK('#F29A38')], ex: 8, ey: -5, es: 2.8, cx: 12, cy: 5 }),
     kirin2: simple({ body: '#DDE1E6', belly: '#F4F7FA', legs: '#8E99A6', back: [...ROUND_EARS('#DDE1E6', '#B7BFC9'), ...BUSHY_TAIL('#DDE1E6', '#8E99A6')], front: [...SPOTS('#5B6573'), { k: 'E', x: 19, y: 3, rx: 3, ry: 2.4, col: '#5B6573' }], ex: 9, ey: -4 }),
@@ -2557,7 +2600,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     const base = kind === 'obs' ? 260 + speed * 0.42 : 200 + speed * 0.2;
     return Math.max(120, (end - x) + base * gapScale * rand(0.7, 1.4));
   }
-  function onHit() { run.hits++; if (run.hits === 2) run.safeDist = dist; }
+  function onHit() { if (godMode && debugOn()) { hearts = Math.min(3, hearts + 1); return; } run.hits++; if (run.hits === 2) run.safeDist = dist; }
   function hitRect(cx, cy, r, x, y, w, h) {
     const nx = Math.max(x, Math.min(cx, x + w)), ny = Math.max(y, Math.min(cy, y + h));
     const dx = cx - nx, dy = cy - ny;
@@ -3795,7 +3838,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     updateHud(true);
     toast(nameOf(save.sel) + '、いくよ！', { size: 30, color: '#FFFFFF', dur: 1.4, y: 0.3 });
     if (save.adult) toast('おとなモード 🔥', { size: 24, color: '#FFB3BF', dur: 1.6, y: 0.22 });
-    if (KM !== 1000) toast('🛠 デバッグ（きろく なし）', { size: 22, color: '#FFFFFF', dur: 2 });
+    if (KM !== 1000) toast('🛠 デバッグ（きろく なし）' + (godMode ? ' 🛡むてき' : ''), { size: 22, color: '#FFFFFF', dur: 2 });
     announceWorldGimmicks(0, 2200);
     jingle([523, 784], 0.1);
   }
@@ -3891,7 +3934,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   $('rankBack').addEventListener('click', () => { $('rankScreen').hidden = true; rankFrom.hidden = false; });
   $('saveScreenBtn').addEventListener('click', () => { $('rankScreen').hidden = true; $('saveScreen').hidden = false; });
   $('saveBack').addEventListener('click', () => { $('saveScreen').hidden = true; $('rankScreen').hidden = false; });
-  let titleTaps = 0, titleTapT = 0, debugStage = 0;
+  let titleTaps = 0, titleTapT = 0, debugStage = 0, godMode = false;
   function renderDbg() {
     const row = $('dbgRow');
     row.hidden = KM === 1000;
@@ -3905,6 +3948,10 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
       $('heroName').textContent = '🔓 かいほう しました';
     });
     row.appendChild(ub);
+    const gb = document.createElement('button');
+    gb.className = 'tool' + (godMode ? ' on' : ''); gb.textContent = '🛡 むてき：' + (godMode ? 'オン' : 'オフ');
+    gb.addEventListener('click', () => { godMode = !godMode; renderDbg(); tone(godMode ? 880 : 440, 0.08, 'square', 0.05); });
+    row.appendChild(gb);
     const names = curWorld().biomes.map(b => BIOME_TOAST[b].split(' ')[0]);
     names.forEach((nm, i) => {
       const b = document.createElement('button');
@@ -3921,7 +3968,7 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     if (titleTaps >= 10) {
       titleTaps = 0;
       KM = KM === 1000 ? 500 : 1000;
-      debugStage = 0;
+      debugStage = 0; godMode = false;
       if (KM === 1000) { // leaving debug: drop anything that isn't really unlocked
         if (!validSel(save.sel)) save.sel = 'piyo';
         const h = HATS.find(x => x.id === save.hat); if (h && !h.ok(save)) save.hat = 'none';
@@ -3961,9 +4008,12 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   }
   $('homeBtn').addEventListener('click', goHome);
 
-  // ---------- character & hat select (paged tiles) ----------
-  const PAGE = 8;
-  let items = [], selIdx = 0, returnTo = startScreen, tab = 'chars', page = 0;
+  // ---------- character & hat select (scrolling grid with filters) ----------
+  let items = [], selIdx = 0, returnTo = startScreen, tab = 'chars', filt = 'all';
+  const FILTERS = {
+    chars: [['all', 'ぜんぶ'], ['have', 'もってる'], ['new', '✨NEW'], ['special', '👑とくべつ'], ['draw', '✏️おえかき']],
+    hats: [['all', 'ぜんぶ'], ['have', 'もってる'], ['new', '✨NEW']],
+  };
   save.seenC = save.seenC || []; save.seenH = save.seenH || [];
   if (save.runs > 0 && !save.seeded) {
     for (const c of CHARS) if (isUnlocked(c)) save.seenC.push(c.id);
@@ -3995,14 +4045,40 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     tab = 'chars';
     const cur = items.findIndex(i => i.id === save.sel);
     selIdx = cur >= 0 ? cur : 0;
-    page = Math.floor(selIdx / PAGE);
+    filt = 'all';
     renderTabs();
-    renderSel();
+    renderSel(true);
     selectScreen.hidden = false;
   }
-  function renderTabs() { document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab)); }
-  function pageCount() { return Math.max(1, Math.ceil((tab === 'chars' ? items.length : HATS.length) / PAGE)); }
-  function renderSel() {
+  function renderTabs() {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab));
+    $('cntChars').textContent = CHARS.filter(isUnlocked).length + '/' + CHARS.length;
+    $('cntHats').textContent = HATS.filter(h => h.ok(save)).length + '/' + HATS.length;
+  }
+  function renderFilters() {
+    const row = $('filters'); row.innerHTML = '';
+    for (const [k, label] of FILTERS[tab]) {
+      const b = document.createElement('button');
+      b.className = 'tool' + (filt === k ? ' on' : ''); b.textContent = label;
+      b.addEventListener('click', () => { filt = k; renderSel(true); tone(560, 0.05, 'square', 0.03); });
+      row.appendChild(b);
+    }
+  }
+  function passFilter(x) {
+    if (tab === 'chars') {
+      if (filt === 'have') return !x.locked && !x.empty;
+      if (filt === 'new') return !x.locked && x.ch && x.ch.need && !save.seenC.includes(x.id);
+      if (filt === 'special') return x.ch && x.ch.special;
+      if (filt === 'draw') return x.slot !== undefined;
+      return true;
+    }
+    const ok = x.ok(save) || debugOn();
+    if (filt === 'have') return ok;
+    if (filt === 'new') return ok && x.id !== 'none' && !save.seenH.includes(x.id);
+    return true;
+  }
+  function renderSel(scrollToSel) {
+    renderFilters();
     // preview + text
     const it = items[selIdx];
     const cond = $('selCond'), edit = $('editBtn');
@@ -4025,12 +4101,11 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     // tiles
     const tiles = $('tiles');
     tiles.innerHTML = '';
-    const list = tab === 'chars' ? items : HATS;
-    const pc = pageCount();
-    page = Math.min(page, pc - 1);
-    const slice = list.slice(page * PAGE, page * PAGE + PAGE);
-    slice.forEach((x, i) => {
-      const gi = page * PAGE + i;
+    const list = (tab === 'chars' ? items : HATS).filter(passFilter);
+    if (!list.length) { const e = document.createElement('div'); e.className = 'empty'; e.textContent = filt === 'new' ? 'あたらしいのは まだ ないよ' : 'まだ ないよ'; tiles.appendChild(e); return; }
+    let selTile = null;
+    list.forEach((x, i) => {
+      const gi = tab === 'chars' ? items.indexOf(x) : i;
       const d = document.createElement('button');
       d.className = 'tile';
       if (tab === 'chars') {
@@ -4076,33 +4151,12 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
           }
         });
       }
+      if (d.classList.contains('sel')) selTile = d;
       tiles.appendChild(d);
     });
-    for (let i = slice.length; i < PAGE; i++) { const sp = document.createElement('div'); tiles.appendChild(sp); }
-    const dots = $('dots');
-    dots.innerHTML = '';
-    for (let i = 0; i < pc; i++) { const dd = document.createElement('span'); dd.className = 'dot' + (i === page ? ' on' : ''); dots.appendChild(dd); }
-    $('prevBtn').style.visibility = pc > 1 ? 'visible' : 'hidden';
-    $('nextBtn').style.visibility = pc > 1 ? 'visible' : 'hidden';
+    if (scrollToSel && selTile) requestAnimationFrame(() => { try { selTile.scrollIntoView({ block: 'center' }); } catch (e) {} });
   }
-  function move(dir) {
-    const pc = pageCount();
-    page = (page + dir + pc) % pc;
-    tone(dir > 0 ? 700 : 600, 0.05, 'square', 0.03);
-    renderSel();
-  }
-  $('prevBtn').addEventListener('click', () => move(-1));
-  $('nextBtn').addEventListener('click', () => move(1));
-  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { tab = t.dataset.tab; page = 0; renderTabs(); renderSel(); tone(560, 0.05, 'square', 0.03); }));
-  let swipeX = null;
-  const tilesEl = $('tiles');
-  tilesEl.addEventListener('pointerdown', e => { swipeX = e.clientX; });
-  tilesEl.addEventListener('pointerup', e => {
-    if (swipeX === null) return;
-    const dx = e.clientX - swipeX; swipeX = null;
-    if (dx < -40) move(1); else if (dx > 40) move(-1);
-  });
-  tilesEl.addEventListener('pointercancel', () => { swipeX = null; });
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { tab = t.dataset.tab; filt = 'all'; renderTabs(); renderSel(true); tone(560, 0.05, 'square', 0.03); }));
   $('editBtn').addEventListener('click', () => { const it = items[selIdx]; if (it && it.slot !== undefined) openEditor(it.slot); });
   $('backBtn').addEventListener('click', () => { selectScreen.hidden = true; returnTo.hidden = false; });
   $('pickBtn1').addEventListener('click', () => openSelect(startScreen));
@@ -4265,10 +4319,9 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
     jingle([523, 659, 784], 0.1, 0.14);
     drawScreen.hidden = true;
     buildItems();
-    tab = 'chars'; renderTabs();
+    tab = 'chars'; filt = 'all'; renderTabs();
     selIdx = items.findIndex(i => i.id === save.sel);
-    page = Math.floor(selIdx / PAGE);
-    renderSel();
+    renderSel(true);
     refreshStart();
     selectScreen.hidden = false;
   });
@@ -4289,9 +4342,6 @@ button.sub.small{font-size:15px;padding:4px 14px;margin-top:4px}
   window.addEventListener('keydown', e => {
     if (e.code === 'Space' || e.code === 'ArrowUp') {
       if (state === 'play') { e.preventDefault(); jump(); }
-    } else if (!selectScreen.hidden) {
-      if (e.code === 'ArrowLeft') move(-1);
-      if (e.code === 'ArrowRight') move(1);
     }
   });
   document.addEventListener('visibilitychange', () => { last = 0; });
